@@ -1,34 +1,61 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>My Attendance</h2>
 
-<!-- ✅ YAHI ADD KARNA HAI -->
+<!-- Page Title -->
+<h2>📊 My Attendance</h2>
+
+<!-- ===============================
+     ATTENDANCE SUMMARY SECTION
+     =============================== -->
 <h3>Attendance Summary</h3>
+
+<!-- Total working days -->
 <p>Total Days: <b>{{ total_days }}</b></p>
+
+<!-- Total present days -->
 <p>Present Days: <b>{{ present_days }}</b></p>
+
+<!-- Attendance percentage -->
 <p>Attendance Percentage: <b>{{ percentage }}%</b></p>
 
 <hr>
 
+<!-- ===============================
+     ATTENDANCE RECORD TABLE
+     =============================== -->
 {% if records %}
-<table border="1" cellpadding="10">
-    <tr>
+<table border="1" cellpadding="10" cellspacing="0" width="50%">
+    <tr style="background-color: #f2f2f2;">
         <th>Date</th>
         <th>Status</th>
     </tr>
 
     {% for rec in records %}
     <tr>
+        <!-- Attendance date -->
         <td>{{ rec.date }}</td>
-        <td>{{ rec.status }}</td>
+
+        <!-- Attendance status -->
+        <td>
+            {% if rec.status == "PRESENT" %}
+                ✅ Present
+            {% else %}
+                ❌ Absent
+            {% endif %}
+        </td>
     </tr>
     {% endfor %}
 </table>
+
 {% else %}
-<p>No attendance records found.</p>
+<!-- Jab koi attendance record na ho -->
+<p style="color: gray;">No attendance records found.</p>
 {% endif %}
 
 <br>
+
+<!-- Back to student dashboard -->
 <a href="{% url 'student_dashboard' %}">← Back to Dashboard</a>
+
 {% endblock %}

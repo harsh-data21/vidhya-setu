@@ -1,17 +1,24 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Student Homework</h2>
+
+<h2>📚 My Homework</h2>
 
 {% for hw in homework %}
-  <div>
-    <h4>{{ hw.title }}</h4>
-    <p>{{ hw.description }}</p>
-    <small>Due: {{ hw.due_date }}</small>
-    <hr>
-  </div>
+    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+        <h3>{{ hw.title }}</h3>
+
+        <p>
+            <b>Description:</b><br>
+            {{ hw.description }}
+        </p>
+
+        <p>
+            <b>Due Date:</b> {{ hw.due_date }}
+        </p>
+    </div>
 {% empty %}
-  <p>No homework available</p>
+    <p>No homework assigned yet.</p>
 {% endfor %}
 
 {% endblock %}

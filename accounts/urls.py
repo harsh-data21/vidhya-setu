@@ -10,18 +10,53 @@ from .views import (
     view_homework,
 )
 
+# ==================================================
+# ACCOUNTS APP URL CONFIGURATION
+# ==================================================
 urlpatterns = [
-    # Home & Auth
-    path('', home, name='home'),
-    path('login/', login_view, name='login'),
-    path('logout/', logout_view, name='logout'),
 
-    # Role-based dashboards
-    path('admin-dashboard/', admin_dashboard, name='admin_dashboard'),
-    path('teacher-dashboard/', teacher_dashboard, name='teacher_dashboard'),
-    path('student-dashboard/', student_dashboard, name='student_dashboard'),
+    # --------------------
+    # HOME & AUTHENTICATION
+    # --------------------
+    path('', home, name='home'),                 # Public home page
+    path('login/', login_view, name='login'),    # Login page
+    path('logout/', logout_view, name='logout'), # Logout action
 
-    #  Homework URLs
-    path('teacher/add-homework/', add_homework, name='add_homework'),
-    path('student/homework/', view_homework, name='view_homework'),
+
+    # --------------------
+    # ROLE-BASED DASHBOARDS
+    # --------------------
+    path(
+        'admin-dashboard/',
+        admin_dashboard,
+        name='admin_dashboard'
+    ),  # Admin dashboard (ADMIN only)
+
+    path(
+        'teacher-dashboard/',
+        teacher_dashboard,
+        name='teacher_dashboard'
+    ),  # Teacher dashboard (TEACHER only)
+
+    path(
+        'student-dashboard/',
+        student_dashboard,
+        name='student_dashboard'
+    ),  # Student dashboard (STUDENT only)
+
+
+    # --------------------
+    # HOMEWORK MODULE
+    # --------------------
+    path(
+        'teacher/add-homework/',
+        add_homework,
+        name='add_homework'
+    ),  # Teacher adds homework
+
+    path(
+        'student/homework/',
+        view_homework,
+        name='view_homework'
+    ),  # Student views homework
 ]

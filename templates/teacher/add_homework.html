@@ -1,49 +1,51 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Add Homework</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        form {
-            width: 400px;
-            margin: 40px auto;
-        }
-        input, textarea, button {
-            width: 100%;
-            padding: 8px;
-            margin-top: 10px;
-        }
-        button {
-            background-color: #2c7be5;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #1a5dcc;
-        }
-    </style>
-</head>
-<body>
+{% extends 'base.html' %}
 
-<h2 style="text-align:center;">Add Homework</h2>
+{% block content %}
 
-<form method="post">
+<!-- Page Title -->
+<h2 style="text-align:center;">📘 Add Homework</h2>
+
+<!-- ===============================
+     ADD HOMEWORK FORM
+     =============================== -->
+<form method="post" style="width:400px; margin:40px auto;">
     {% csrf_token %}
+    <!-- CSRF token: Django security ke liye mandatory -->
 
+    <!-- Homework Title -->
     <label>Title</label>
-    <input type="text" name="title" required>
+    <input type="text"
+           name="title"
+           required
+           style="width:100%; padding:8px; margin-top:5px;">
 
-    <label>Description</label>
-    <textarea name="description" rows="4" required></textarea>
+    <!-- Homework Description -->
+    <label style="margin-top:10px;">Description</label>
+    <textarea name="description"
+              rows="4"
+              required
+              style="width:100%; padding:8px; margin-top:5px;"></textarea>
 
-    <label>Due Date</label>
-    <input type="date" name="due_date" required>
+    <!-- Due Date -->
+    <label style="margin-top:10px;">Due Date</label>
+    <input type="date"
+           name="due_date"
+           required
+           style="width:100%; padding:8px; margin-top:5px;">
 
-    <button type="submit">Add Homework</button>
+    <!-- Submit Button -->
+    <button type="submit"
+            style="
+                width:100%;
+                padding:10px;
+                margin-top:15px;
+                background-color:#2c7be5;
+                color:white;
+                border:none;
+                cursor:pointer;
+            ">
+        ✅ Add Homework
+    </button>
 </form>
 
-</body>
-</html>
+{% endblock %}

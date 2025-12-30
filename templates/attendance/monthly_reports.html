@@ -1,34 +1,74 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Monthly Attendance Report</h2>
 
-<form method="get">
-    Month:
-    <input type="number" name="month" min="1" max="12" value="{{ month }}">
-    Year:
-    <input type="number" name="year" value="{{ year }}">
-    <button type="submit">Filter</button>
+<!-- Page Title -->
+<h2>📅 Monthly Attendance Report</h2>
+
+<!-- ===============================
+     FILTER FORM (MONTH / YEAR)
+     =============================== -->
+<form method="get" style="margin-bottom: 20px;">
+    <!-- Month filter -->
+    <label>
+        Month:
+        <input type="number"
+               name="month"
+               min="1"
+               max="12"
+               value="{{ month }}"
+               required>
+    </label>
+
+    <!-- Year filter -->
+    <label style="margin-left: 10px;">
+        Year:
+        <input type="number"
+               name="year"
+               value="{{ year }}"
+               required>
+    </label>
+
+    <!-- Submit button -->
+    <button type="submit">🔍 Filter</button>
 </form>
 
-<br>
+<hr>
 
-<table border="1" cellpadding="10">
-    <tr>
-        <th>Student</th>
-        <th>Present</th>
-        <th>Absent</th>
+<!-- ===============================
+     MONTHLY REPORT TABLE
+     =============================== -->
+<table border="1" cellpadding="10" cellspacing="0" width="60%">
+    <tr style="background-color: #f2f2f2;">
+        <th>Student Name</th>
+        <th>Present Days</th>
+        <th>Absent Days</th>
     </tr>
 
     {% for row in report %}
     <tr>
+        <!-- Student username -->
         <td>{{ row.student.username }}</td>
-        <td>{{ row.present }}</td>
-        <td>{{ row.absent }}</td>
+
+        <!-- Total present days -->
+        <td style="text-align: center;">{{ row.present }}</td>
+
+        <!-- Total absent days -->
+        <td style="text-align: center;">{{ row.absent }}</td>
+    </tr>
+    {% empty %}
+    <!-- Jab report me data na ho -->
+    <tr>
+        <td colspan="3" style="text-align: center; color: gray;">
+            No attendance data available for this month.
+        </td>
     </tr>
     {% endfor %}
 </table>
 
 <br>
+
+<!-- Back to dashboard -->
 <a href="{% url 'teacher_dashboard' %}">← Back to Dashboard</a>
+
 {% endblock %}
