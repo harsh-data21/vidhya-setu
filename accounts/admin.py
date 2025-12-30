@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, TeacherProfile, StudentProfile
+from .models import User, TeacherProfile, StudentProfile, Homework
 
 
 @admin.register(User)
@@ -19,6 +19,14 @@ class TeacherProfileAdmin(admin.ModelAdmin):
 class StudentProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'roll_no', 'phone')
     search_fields = ('user__username', 'roll_no')
+    
+    
+@admin.register(Homework)
+class HomeworkAdmin(admin.ModelAdmin):
+    list_display = ('title', 'teacher', 'due_date', 'created_at')
+    list_filter = ('due_date',)
+    search_fields = ('title', 'teacher__username')
+
 
 
 admin.site.site_header = "Vidhya Setu Administration"

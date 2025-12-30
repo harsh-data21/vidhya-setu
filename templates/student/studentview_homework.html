@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Student Homework</h2>
+
+{% for hw in homework %}
+  <div>
+    <h4>{{ hw.title }}</h4>
+    <p>{{ hw.description }}</p>
+    <small>Due: {{ hw.due_date }}</small>
+    <hr>
+  </div>
+{% empty %}
+  <p>No homework available</p>
+{% endfor %}
+
+{% endblock %}

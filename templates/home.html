@@ -1,10 +1,31 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Vidhya Setu</title>
-</head>
-<body>
-    <h1>Welcome to Vidhya Setu</h1>
-    <p>School Management System</p>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Welcome to Vidhya Setu</h2>
+
+<p>
+    Vidhya Setu is a School Management System where
+    Admin, Teachers, and Students can manage daily activities.
+</p>
+
+{% if user.is_authenticated %}
+    <p>
+        You are logged in as <strong>{{ user.username }}</strong>.
+    </p>
+
+    {% if user.role == 'ADMIN' %}
+        <a href="{% url 'admin_dashboard' %}">Go to Admin Dashboard</a>
+
+    {% elif user.role == 'TEACHER' %}
+        <a href="{% url 'teacher_dashboard' %}">Go to Teacher Dashboard</a>
+
+    {% else %}
+        <a href="{% url 'student_dashboard' %}">Go to Student Dashboard</a>
+    {% endif %}
+
+{% else %}
+    <p>Please login to continue.</p>
+    <a href="{% url 'login' %}">Login</a>
+{% endif %}
+
+{% endblock %}

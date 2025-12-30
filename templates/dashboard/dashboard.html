@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>{{ role }} Dashboard</h2>
+
+<p>
+    Welcome, <strong>{{ request.user.username }}</strong>
+</p>
+
+<hr>
+
+{% if role == 'Admin' %}
+    <h4>Admin Actions</h4>
+    <ul>
+        <li>Manage Users</li>
+        <li>Create Notices</li>
+        <li>
+            <a href="{% url 'monthly_attendance_report' %}">
+                Monthly Attendance Report
+            </a>
+        </li>
+    </ul>
+
+{% elif role == 'Teacher' %}
+    <h4>Teacher Actions</h4>
+    <ul>
+        <li>
+            <a href="{% url 'mark_attendance' %}">
+                Mark Attendance
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'monthly_attendance_report' %}">
+                Monthly Attendance Report
+            </a>
+        </li>
+        <li>Upload Marks</li>
+        <li>View Students</li>
+    </ul>
+
+{% else %}
+    <h4>Student Actions</h4>
+    <ul>
+        <li>
+            <a href="{% url 'student_attendance' %}">
+                View Attendance
+            </a>
+        </li>
+        <li>Check Marks</li>
+        <li>Read Notices</li>
+    </ul>
+{% endif %}
+
+<br>
+
+<a href="{% url 'logout' %}">Logout</a>
+{% endblock %}

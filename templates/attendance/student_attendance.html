@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>My Attendance</h2>
+
+<!-- ✅ YAHI ADD KARNA HAI -->
+<h3>Attendance Summary</h3>
+<p>Total Days: <b>{{ total_days }}</b></p>
+<p>Present Days: <b>{{ present_days }}</b></p>
+<p>Attendance Percentage: <b>{{ percentage }}%</b></p>
+
+<hr>
+
+{% if records %}
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Date</th>
+        <th>Status</th>
+    </tr>
+
+    {% for rec in records %}
+    <tr>
+        <td>{{ rec.date }}</td>
+        <td>{{ rec.status }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No attendance records found.</p>
+{% endif %}
+
+<br>
+<a href="{% url 'student_dashboard' %}">← Back to Dashboard</a>
+{% endblock %}

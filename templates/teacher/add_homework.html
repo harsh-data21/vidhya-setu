@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Homework</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        form {
+            width: 400px;
+            margin: 40px auto;
+        }
+        input, textarea, button {
+            width: 100%;
+            padding: 8px;
+            margin-top: 10px;
+        }
+        button {
+            background-color: #2c7be5;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #1a5dcc;
+        }
+    </style>
+</head>
+<body>
+
+<h2 style="text-align:center;">Add Homework</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <label>Title</label>
+    <input type="text" name="title" required>
+
+    <label>Description</label>
+    <textarea name="description" rows="4" required></textarea>
+
+    <label>Due Date</label>
+    <input type="date" name="due_date" required>
+
+    <button type="submit">Add Homework</button>
+</form>
+
+</body>
+</html>
