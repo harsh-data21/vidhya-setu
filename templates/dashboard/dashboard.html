@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+<!-- ================================================= -->
+<!-- 📊 Dashboard Heading -->
+<!-- ================================================= -->
 <h2>{{ role }} Dashboard</h2>
 
 <p>
@@ -9,49 +13,77 @@
 
 <hr>
 
+<!-- ================================================= -->
+<!-- 👑 ADMIN DASHBOARD -->
+<!-- ================================================= -->
 {% if role == 'Admin' %}
-    <h4>Admin Actions</h4>
+
+    <h4>👑 Admin Actions</h4>
     <ul>
+        <!-- Future scope -->
         <li>Manage Users</li>
         <li>Create Notices</li>
+
+        <!-- Attendance Report -->
         <li>
             <a href="{% url 'monthly_attendance_report' %}">
-                Monthly Attendance Report
+                📊 Monthly Attendance Report
             </a>
         </li>
     </ul>
 
+<!-- ================================================= -->
+<!-- 👨‍🏫 TEACHER DASHBOARD -->
+<!-- ================================================= -->
 {% elif role == 'Teacher' %}
-    <h4>Teacher Actions</h4>
+
+    <h4>👨‍🏫 Teacher Actions</h4>
     <ul>
+        <!-- Mark daily attendance -->
         <li>
             <a href="{% url 'mark_attendance' %}">
-                Mark Attendance
+                📋 Mark Attendance
             </a>
         </li>
+
+        <!-- View monthly report -->
         <li>
             <a href="{% url 'monthly_attendance_report' %}">
-                Monthly Attendance Report
+                📊 Monthly Attendance Report
             </a>
         </li>
+
+        <!-- Future features -->
         <li>Upload Marks</li>
         <li>View Students</li>
     </ul>
 
+<!-- ================================================= -->
+<!-- 👨‍🎓 STUDENT DASHBOARD -->
+<!-- ================================================= -->
 {% else %}
-    <h4>Student Actions</h4>
+
+    <h4>👨‍🎓 Student Actions</h4>
     <ul>
+        <!-- View own attendance -->
         <li>
             <a href="{% url 'student_attendance' %}">
-                View Attendance
+                📊 View Attendance
             </a>
         </li>
+
+        <!-- Future features -->
         <li>Check Marks</li>
         <li>Read Notices</li>
     </ul>
+
 {% endif %}
 
-<br>
+<hr>
 
-<a href="{% url 'logout' %}">Logout</a>
+<!-- ================================================= -->
+<!-- 🚪 Logout -->
+<!-- ================================================= -->
+<a href="{% url 'logout' %}">🚪 Logout</a>
+
 {% endblock %}

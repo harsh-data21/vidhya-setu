@@ -1,6 +1,6 @@
 from django.urls import path
 
-# Attendance app ke views import kar rahe hain
+# Attendance app ke views import
 from .views import (
     mark_attendance,
     student_attendance,
@@ -8,32 +8,53 @@ from .views import (
 )
 
 # ======================================================
-# Attendance App URLs
+# Attendance App URL Configuration
 # ======================================================
+# Ye file attendance module ke saare routes define karti hai
+# Saare URLs main project ke urls.py me include honge:
+# path('attendance/', include('attendance.urls'))
+# ======================================================
+
 urlpatterns = [
 
-    # 👨‍🏫 Teacher ke liye:
+    # --------------------------------------------------
+    # 👨‍🏫 TEACHER
+    # --------------------------------------------------
     # Daily attendance mark karne ka page
-    # URL: /attendance/mark/
+    # Sirf TEACHER role access kar sakta hai
+    #
+    # Full URL:
+    # /attendance/mark/
+    # --------------------------------------------------
     path(
         'mark/',
         mark_attendance,
         name='mark_attendance'
     ),
 
-    # 👨‍🎓 Student ke liye:
-    # Apni attendance dekhne ka page
-    # URL: /attendance/my/
+    # --------------------------------------------------
+    # 👨‍🎓 STUDENT
+    # --------------------------------------------------
+    # Student apni hi attendance dekh sakta hai
+    #
+    # Full URL:
+    # /attendance/my/
+    # --------------------------------------------------
     path(
         'my/',
         student_attendance,
         name='student_attendance'
     ),
 
-    # 📊 Admin / Teacher ke liye:
-    # Monthly attendance report dekhne ka page
-    # URL: /attendance/monthly-report/
-    # Example: /attendance/monthly-report/?month=7&year=2025
+    # --------------------------------------------------
+    # 📊 ADMIN / TEACHER
+    # --------------------------------------------------
+    # Monthly attendance report
+    # Month aur year query params se aate hain
+    #
+    # Example:
+    # /attendance/monthly-report/?month=7&year=2025
+    # --------------------------------------------------
     path(
         'monthly-report/',
         monthly_attendance_report,

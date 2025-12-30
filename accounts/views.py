@@ -13,6 +13,7 @@ from .models import Homework
 def home(request):
     """
     Public home page
+    - Login se pehle sab users ke liye accessible
     """
     return render(request, 'home.html')
 
@@ -22,11 +23,12 @@ def home(request):
 # ==================================================
 def login_view(request):
     """
-    - User login handle karta hai
-    - Role ke basis par dashboard redirect
+    Handles user login:
+    - Username & password authenticate karta hai
+    - Role ke basis par dashboard redirect karta hai
     """
 
-    # Agar user already login hai → direct dashboard
+    # Agar user already logged in hai → direct dashboard bhejo
     if request.user.is_authenticated:
         if request.user.role == 'ADMIN':
             return redirect('admin_dashboard')
@@ -35,17 +37,17 @@ def login_view(request):
         else:
             return redirect('student_dashboard')
 
-    # Login form submit
+    # Login form submit hone par
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        # Django authentication
+        # Django built-in authentication
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
 
-            # Extra safety: inactive user login na kare
+            # Extra security: inactive user login na kare
             if not user.is_active:
                 messages.error(request, "Your account is inactive")
                 return redirect('login')
@@ -53,7 +55,7 @@ def login_view(request):
             # Login success
             login(request, user)
 
-            # Role-based redirect
+            # Role-based dashboard redirect
             if user.role == 'ADMIN':
                 return redirect('admin_dashboard')
             elif user.role == 'TEACHER':
@@ -64,6 +66,7 @@ def login_view(request):
         else:
             messages.error(request, "Invalid username or password")
 
+    # GET request → login page show
     return render(request, 'login.html')
 
 
@@ -73,7 +76,9 @@ def login_view(request):
 @login_required
 def logout_view(request):
     """
-    User logout
+    User logout:
+    - Session clear karta hai
+    - Login page par redirect karta hai
     """
     logout(request)
     return redirect('login')
@@ -82,34 +87,47 @@ def logout_view(request):
 # ==================================================
 # ROLE BASED DASHBOARDS (SECURE)
 # ==================================================
+
 @login_required
 def admin_dashboard(request):
     """
-    Admin dashboard
+    Admin dashboard:
+    - Sirf ADMIN role allowed
     """
     if request.user.role != 'ADMIN':
         return HttpResponseForbidden("Access Denied")
-    return render(request, 'dashboard/dashboard.html', {'role': 'Admin'})
+
+    return render(request, 'dashboard/dashboard.html', {
+        'role': 'Admin'
+    })
 
 
 @login_required
 def teacher_dashboard(request):
     """
-    Teacher dashboard
+    Teacher dashboard:
+    - Sirf TEACHER role allowed
     """
     if request.user.role != 'TEACHER':
         return HttpResponseForbidden("Access Denied")
-    return render(request, 'dashboard/dashboard.html', {'role': 'Teacher'})
+
+    return render(request, 'dashboard/dashboard.html', {
+        'role': 'Teacher'
+    })
 
 
 @login_required
 def student_dashboard(request):
     """
-    Student dashboard
+    Student dashboard:
+    - Sirf STUDENT role allowed
     """
     if request.user.role != 'STUDENT':
         return HttpResponseForbidden("Access Denied")
-    return render(request, 'dashboard/dashboard.html', {'role': 'Student'})
+
+    return render(request, 'dashboard/dashboard.html', {
+        'role': 'Student'
+    })
 
 
 # ==================================================
@@ -122,6 +140,7 @@ def student_dashboard(request):
 @login_required
 def add_homework(request):
     """
+    Homework add karne ka view:
     - Sirf TEACHER homework add kar sakta hai
     - Homework teacher se linked hota hai
     """
@@ -140,7 +159,7 @@ def add_homework(request):
         messages.success(request, "Homework added successfully")
         return redirect('teacher_dashboard')
 
-    # Homework add form
+    # GET request → homework add form
     return render(request, 'teacher/add_homework.html')
 
 
@@ -150,8 +169,9 @@ def add_homework(request):
 @login_required
 def view_homework(request):
     """
+    Homework view karne ka view:
     - Sirf STUDENT homework dekh sakta hai
-    - Latest homework upar dikhaya jaata hai
+    - Latest homework sabse upar show hota hai
     """
 
     if request.user.role != 'STUDENT':

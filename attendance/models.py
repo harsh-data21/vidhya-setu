@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.core.exceptions import ValidationError
 
 
 class Attendance(models.Model):
@@ -7,17 +8,24 @@ class Attendance(models.Model):
     Attendance Model
     ----------------
     Ye model student ki daily attendance store karta hai.
+
+    Rules:
+    - Ek student ki ek date par sirf ek attendance hogi
+    - Attendance sirf STUDENT ke liye mark hogi
+    - Attendance sirf TEACHER ke dwara mark hogi
     """
 
-    # Attendance status ke choices
+    # --------------------
+    # Attendance Status
+    # --------------------
     STATUS_CHOICES = (
         ('P', 'Present'),
         ('A', 'Absent'),
     )
 
-    # Student jiska attendance mark ho raha hai
-    # AUTH_USER_MODEL use kiya gaya hai (Custom User model)
-    # limit_choices_to ensure karta hai ki sirf STUDENT role wale hi select ho
+    # --------------------
+    # Student (attendance kiski hai)
+    # --------------------
     student = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -25,20 +33,24 @@ class Attendance(models.Model):
         limit_choices_to={'role': 'STUDENT'}
     )
 
-    # Kis date ki attendance hai
+    # --------------------
+    # Attendance Date
+    # --------------------
     date = models.DateField()
 
-    # Attendance status (Present / Absent)
-    # Default Absent rakha gaya hai (safe practice)
+    # --------------------
+    # Attendance Status
+    # Default = Absent (safe practice)
+    # --------------------
     status = models.CharField(
         max_length=1,
         choices=STATUS_CHOICES,
         default='A'
     )
 
-    # Teacher jisne attendance mark ki
-    # Agar teacher delete ho jaaye to attendance safe rahe (SET_NULL)
-    # Sirf TEACHER role wale users allow honge
+    # --------------------
+    # Teacher who marked attendance
+    # --------------------
     marked_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -48,23 +60,48 @@ class Attendance(models.Model):
         limit_choices_to={'role': 'TEACHER'}
     )
 
-    # Record kab create hua
+    # --------------------
+    # Timestamps
+    # --------------------
     created_at = models.DateTimeField(auto_now_add=True)
-
-    # Record kab last update hua
     updated_at = models.DateTimeField(auto_now=True)
 
+    # --------------------
+    # Model-level validation (extra safety)
+    # --------------------
+    def clean(self):
+        """
+        Extra validation:
+        - Student role must be STUDENT
+        - Marked_by role must be TEACHER
+        """
+        if self.student and self.student.role != 'STUDENT':
+            raise ValidationError("Attendance can only be marked for students.")
+
+        if self.marked_by and self.marked_by.role != 'TEACHER':
+            raise ValidationError("Attendance can only be marked by a teacher.")
+
+    # --------------------
+    # Meta Configuration
+    # --------------------
     class Meta:
-        # Same student ke liye same date par duplicate attendance prevent karega
+        # Same student + same date = no duplicate attendance
         unique_together = ('student', 'date')
 
-        # Latest date wali attendance pehle dikhegi
+        # Latest attendance first
         ordering = ['-date']
 
-        # Django admin ke liye readable name
+        # Admin display names
         verbose_name = 'Attendance'
         verbose_name_plural = 'Attendance Records'
 
+        # Database optimization
+        indexes = [
+            models.Index(fields=['student', 'date']),
+        ]
+
+    # --------------------
+    # String Representation
+    # --------------------
     def __str__(self):
-        # Admin / shell me readable format
         return f"{self.student.username} | {self.date} | {self.get_status_display()}"

@@ -11,8 +11,8 @@
 <!-- ℹ️ Information Note -->
 <!-- ================================================= -->
 <p style="color: #555;">
-    <b>Note:</b> Agar aaj ki attendance dobara submit karoge,
-    to purani attendance <b>UPDATE</b> ho jaayegi.
+    <b>Note:</b> Agar same date ki attendance dobara submit ki jaati hai,
+    to purani attendance <b>UPDATE</b> ho jaayegi (duplicate nahi banegi).
 </p>
 
 <hr>
@@ -24,6 +24,23 @@
     {% csrf_token %}
     <!-- CSRF token: Django security ke liye mandatory -->
 
+    <!-- =============================== -->
+    <!-- 📅 Date Selector -->
+    <!-- =============================== -->
+    <label for="date"><b>Date:</b></label>
+    <input
+        type="date"
+        id="date"
+        name="date"
+        value="{{ date }}"
+        required
+    >
+
+    <br><br>
+
+    <!-- =============================== -->
+    <!-- 👨‍🎓 Students Attendance Table -->
+    <!-- =============================== -->
     <table border="1" cellpadding="10" cellspacing="0" width="60%">
         <tr style="background-color: #f2f2f2;">
             <th>Student Name</th>
@@ -40,25 +57,27 @@
             <!-- ✅ Present radio button -->
             <!-- name = student.id
                  value = 'P' (Present)
-                 Ye value directly views.py me jaati hai
+                 Ye value views.py me status ke roop me jaati hai
             -->
             <td style="text-align: center;">
                 <input
                     type="radio"
                     name="{{ student.id }}"
                     value="P"
-                    required
                 >
             </td>
 
             <!-- ============================== -->
             <!-- ❌ Absent radio button -->
-            <!-- value = 'A' (Absent) -->
+            <!-- value = 'A' (Absent)
+                 Default Absent rakha gaya hai
+            -->
             <td style="text-align: center;">
                 <input
                     type="radio"
                     name="{{ student.id }}"
                     value="A"
+                    checked
                 >
             </td>
         </tr>
