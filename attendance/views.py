@@ -12,44 +12,51 @@ from .models import Attendance
 # ======================================================
 @login_required
 def mark_attendance(request):
-    # ❌ Agar user teacher nahi hai to login page par bhej do
+    """
+    Ye view TEACHER ko students ki daily attendance mark karne deta hai.
+    """
+
+    # ❌ Agar user TEACHER nahi hai to login page par redirect
     if request.user.role != 'TEACHER':
         return redirect('login')
 
-    # ✅ Sirf STUDENT role wale users nikaalo
+    # ✅ Sirf STUDENT role wale users fetch karo
     students = User.objects.filter(role='STUDENT')
 
-    # ✅ Aaj ki date (timezone safe)
+    # ✅ Timezone-safe aaj ki date
     today = timezone.now().date()
 
     # -------------------------
     # FORM SUBMIT (POST REQUEST)
     # -------------------------
     if request.method == 'POST':
+
+        # Har student ke liye attendance process karo
         for student in students:
-            # Template se aane wala status (P / A)
-            # checkbox / radio ka name = student.id
+            # Template se aane wala status
+            # input ka name = student.id
+            # value = 'P' ya 'A'
             status = request.POST.get(str(student.id))
 
-            # Agar status mila tabhi entry banao / update karo
+            # Agar status mila tabhi database me save karo
             if status:
                 Attendance.objects.update_or_create(
                     student=student,   # kis student ki attendance
                     date=today,        # kis date ki
                     defaults={
                         'status': status,          # Present / Absent
-                        'marked_by': request.user  # kis teacher ne mark ki
+                        'marked_by': request.user  # kaun teacher ne mark ki
                     }
                 )
 
-        # Attendance mark hone ke baad teacher dashboard
+        # Attendance mark hone ke baad teacher dashboard par bhej do
         return redirect('teacher_dashboard')
 
     # -------------------------
     # PAGE LOAD (GET REQUEST)
     # -------------------------
     return render(request, 'attendance/mark_attendance.html', {
-        'students': students,  # student list template ko bhejna
+        'students': students,  # students list template ko dene ke liye
         'date': today          # aaj ki date show karne ke liye
     })
 
@@ -59,26 +66,30 @@ def mark_attendance(request):
 # ======================================================
 @login_required
 def student_attendance(request):
-    # ❌ Agar student nahi hai to access deny
+    """
+    Ye view STUDENT ko sirf apni hi attendance dekhne deta hai.
+    """
+
+    # ❌ Agar user STUDENT nahi hai to access deny
     if request.user.role != 'STUDENT':
         return render(request, '403.html')
 
-    # ✅ Student sirf apni attendance dekh sakta hai
+    # ✅ Student sirf apni attendance records dekh sakta hai
     records = Attendance.objects.filter(student=request.user)
 
     # 📊 Total attendance days
     total_days = records.count()
 
-    # 📊 Present days (model me 'P' short code use hua hai)
+    # 📊 Present days ('P' = Present)
     present_days = records.filter(status='P').count()
 
-    # 📈 Attendance percentage calculate
+    # 📈 Attendance percentage calculation
     percentage = 0
     if total_days > 0:
         percentage = round((present_days / total_days) * 100, 2)
 
     return render(request, 'attendance/student_attendance.html', {
-        'records': records.order_by('-date'),  # latest date upar
+        'records': records.order_by('-date'),  # latest attendance upar
         'total_days': total_days,
         'present_days': present_days,
         'percentage': percentage
@@ -90,38 +101,42 @@ def student_attendance(request):
 # ======================================================
 @login_required
 def monthly_attendance_report(request):
+    """
+    Ye view ADMIN aur TEACHER ko monthly attendance report dikhata hai.
+    """
+
     # ❌ Sirf ADMIN ya TEACHER allowed
     if request.user.role not in ['ADMIN', 'TEACHER']:
         return render(request, '403.html')
 
-    # ✅ Sab students nikaalo
+    # ✅ Sabhi students fetch karo
     students = User.objects.filter(role='STUDENT')
 
     # URL se month aur year lo (?month=7&year=2025)
     month = request.GET.get('month')
     year = request.GET.get('year')
 
-    # Agar month/year nahi diya to current month/year
+    # Agar month/year nahi diya gaya to current month/year use karo
     today = date.today()
     month = int(month) if month else today.month
     year = int(year) if year else today.year
 
     report = []
 
-    # Har student ka monthly data banao
+    # Har student ke liye monthly present / absent count
     for student in students:
         present_count = Attendance.objects.filter(
             student=student,
             date__month=month,
             date__year=year,
-            status='P'   # Present
+            status='P'
         ).count()
 
         absent_count = Attendance.objects.filter(
             student=student,
             date__month=month,
             date__year=year,
-            status='A'   # Absent
+            status='A'
         ).count()
 
         report.append({

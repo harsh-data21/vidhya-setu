@@ -2,12 +2,14 @@
 
 {% block content %}
 
-<!-- Page Title -->
+<!-- ================================================= -->
+<!-- 📊 Page Title -->
+<!-- ================================================= -->
 <h2>📊 My Attendance</h2>
 
-<!-- ===============================
-     ATTENDANCE SUMMARY SECTION
-     =============================== -->
+<!-- ================================================= -->
+<!-- 📈 ATTENDANCE SUMMARY SECTION -->
+<!-- ================================================= -->
 <h3>Attendance Summary</h3>
 
 <!-- Total working days -->
@@ -17,13 +19,16 @@
 <p>Present Days: <b>{{ present_days }}</b></p>
 
 <!-- Attendance percentage -->
-<p>Attendance Percentage: <b>{{ percentage }}%</b></p>
+<p>
+    Attendance Percentage:
+    <b style="color: green;">{{ percentage }}%</b>
+</p>
 
 <hr>
 
-<!-- ===============================
-     ATTENDANCE RECORD TABLE
-     =============================== -->
+<!-- ================================================= -->
+<!-- 📋 ATTENDANCE RECORD TABLE -->
+<!-- ================================================= -->
 {% if records %}
 <table border="1" cellpadding="10" cellspacing="0" width="50%">
     <tr style="background-color: #f2f2f2;">
@@ -38,10 +43,10 @@
 
         <!-- Attendance status -->
         <td>
-            {% if rec.status == "PRESENT" %}
-                ✅ Present
+            {% if rec.status == "P" %}
+                <span style="color: green; font-weight: bold;">✅ Present</span>
             {% else %}
-                ❌ Absent
+                <span style="color: red; font-weight: bold;">❌ Absent</span>
             {% endif %}
         </td>
     </tr>
@@ -55,7 +60,9 @@
 
 <br>
 
-<!-- Back to student dashboard -->
+<!-- ================================================= -->
+<!-- 🔙 Back to Student Dashboard -->
+<!-- ================================================= -->
 <a href="{% url 'student_dashboard' %}">← Back to Dashboard</a>
 
 {% endblock %}

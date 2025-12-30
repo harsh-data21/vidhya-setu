@@ -2,73 +2,76 @@
 
 {% block content %}
 
-<!-- Page Title -->
+<!-- ================================================= -->
+<!-- 📊 Page Heading -->
+<!-- ================================================= -->
 <h2>📅 Monthly Attendance Report</h2>
 
-<!-- ===============================
-     FILTER FORM (MONTH / YEAR)
-     =============================== -->
+<!-- ================================================= -->
+<!-- 🔍 Filter Section -->
+<!-- ================================================= -->
 <form method="get" style="margin-bottom: 20px;">
-    <!-- Month filter -->
-    <label>
-        Month:
-        <input type="number"
-               name="month"
-               min="1"
-               max="12"
-               value="{{ month }}"
-               required>
-    </label>
+    <!-- Month input -->
+    <label>Month:</label>
+    <input type="number" name="month" min="1" max="12" value="{{ month }}" required>
 
-    <!-- Year filter -->
-    <label style="margin-left: 10px;">
-        Year:
-        <input type="number"
-               name="year"
-               value="{{ year }}"
-               required>
-    </label>
+    <!-- Year input -->
+    <label>Year:</label>
+    <input type="number" name="year" value="{{ year }}" required>
 
-    <!-- Submit button -->
-    <button type="submit">🔍 Filter</button>
+    <button type="submit">🔍 View Report</button>
 </form>
 
 <hr>
 
-<!-- ===============================
-     MONTHLY REPORT TABLE
-     =============================== -->
-<table border="1" cellpadding="10" cellspacing="0" width="60%">
+<!-- ================================================= -->
+<!-- 📋 Attendance Report Table -->
+<!-- ================================================= -->
+{% if report %}
+<table border="1" cellpadding="10" cellspacing="0" width="70%">
     <tr style="background-color: #f2f2f2;">
         <th>Student Name</th>
         <th>Present Days</th>
         <th>Absent Days</th>
+        <th>Total Days</th>
     </tr>
 
     {% for row in report %}
     <tr>
-        <!-- Student username -->
+        <!-- Student name -->
         <td>{{ row.student.username }}</td>
 
-        <!-- Total present days -->
-        <td style="text-align: center;">{{ row.present }}</td>
+        <!-- Present count -->
+        <td style="color: green; font-weight: bold;">
+            {{ row.present }}
+        </td>
 
-        <!-- Total absent days -->
-        <td style="text-align: center;">{{ row.absent }}</td>
-    </tr>
-    {% empty %}
-    <!-- Jab report me data na ho -->
-    <tr>
-        <td colspan="3" style="text-align: center; color: gray;">
-            No attendance data available for this month.
+        <!-- Absent count -->
+        <td style="color: red; font-weight: bold;">
+            {{ row.absent }}
+        </td>
+
+        <!-- Total days = Present + Absent -->
+        <td>
+            {{ row.present|add:row.absent }}
         </td>
     </tr>
     {% endfor %}
 </table>
 
+{% else %}
+<p style="color: gray;">No attendance data available for this month.</p>
+{% endif %}
+
 <br>
 
-<!-- Back to dashboard -->
-<a href="{% url 'teacher_dashboard' %}">← Back to Dashboard</a>
+<!-- ================================================= -->
+<!-- 🔙 Back Links -->
+<!-- ================================================= -->
+{% if user.role == 'ADMIN' %}
+    <a href="{% url 'admin_dashboard' %}">← Back to Admin Dashboard</a>
+{% else %}
+    <a href="{% url 'teacher_dashboard' %}">← Back to Teacher Dashboard</a>
+{% endif %}
 
 {% endblock %}

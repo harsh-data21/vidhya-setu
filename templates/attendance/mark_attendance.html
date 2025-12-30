@@ -2,10 +2,14 @@
 
 {% block content %}
 
-<!-- Page Heading -->
+<!-- ================================================= -->
+<!-- 📋 Page Heading -->
+<!-- ================================================= -->
 <h2>📋 Mark Attendance – {{ date }}</h2>
 
-<!-- Info Note -->
+<!-- ================================================= -->
+<!-- ℹ️ Information Note -->
+<!-- ================================================= -->
 <p style="color: #555;">
     <b>Note:</b> Agar aaj ki attendance dobara submit karoge,
     to purani attendance <b>UPDATE</b> ho jaayegi.
@@ -13,7 +17,9 @@
 
 <hr>
 
-<!-- Attendance Form -->
+<!-- ================================================= -->
+<!-- 📝 Attendance Form -->
+<!-- ================================================= -->
 <form method="post">
     {% csrf_token %}
     <!-- CSRF token: Django security ke liye mandatory -->
@@ -30,30 +36,33 @@
             <!-- Student username -->
             <td>{{ student.username }}</td>
 
-            <!-- Present radio button -->
+            <!-- ============================== -->
+            <!-- ✅ Present radio button -->
+            <!-- name = student.id
+                 value = 'P' (Present)
+                 Ye value directly views.py me jaati hai
+            -->
             <td style="text-align: center;">
-                <!-- 
-                    name = student.id
-                    value = PRESENT
-                    Ye value directly views.py me jaati hai
-                -->
                 <input
                     type="radio"
                     name="{{ student.id }}"
-                    value="PRESENT"
+                    value="P"
                     required
                 >
             </td>
 
-            <!-- Absent radio button -->
+            <!-- ============================== -->
+            <!-- ❌ Absent radio button -->
+            <!-- value = 'A' (Absent) -->
             <td style="text-align: center;">
                 <input
                     type="radio"
                     name="{{ student.id }}"
-                    value="ABSENT"
+                    value="A"
                 >
             </td>
         </tr>
+
         {% empty %}
         <!-- Agar koi student na ho -->
         <tr>
@@ -66,7 +75,9 @@
 
     <br>
 
-    <!-- Submit Button -->
+    <!-- ================================================= -->
+    <!-- 💾 Submit Button -->
+    <!-- ================================================= -->
     <button type="submit">
         ✅ Save Attendance
     </button>
