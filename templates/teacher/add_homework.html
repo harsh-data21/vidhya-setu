@@ -2,50 +2,106 @@
 
 {% block content %}
 
-<!-- Page Title -->
-<h2 style="text-align:center;">📘 Add Homework</h2>
+<!-- ===============================
+     PAGE TITLE
+     =============================== -->
+<h2 style="text-align:center; margin-top:20px;">
+    📘 Add Homework
+</h2>
+
+<!-- ===============================
+     FLASH MESSAGES
+     =============================== -->
+{% if messages %}
+    <div style="width:400px; margin:20px auto;">
+        {% for message in messages %}
+            <p style="
+                padding:10px;
+                background:#e7f3ff;
+                border-left:5px solid #2c7be5;
+                margin-bottom:10px;
+            ">
+                {{ message }}
+            </p>
+        {% endfor %}
+    </div>
+{% endif %}
 
 <!-- ===============================
      ADD HOMEWORK FORM
      =============================== -->
-<form method="post" style="width:400px; margin:40px auto;">
+<form method="post" style="
+        width:400px;
+        margin:30px auto;
+        padding:20px;
+        border:1px solid #ddd;
+        border-radius:6px;
+        background:#fafafa;
+    ">
     {% csrf_token %}
     <!-- CSRF token: Django security ke liye mandatory -->
 
     <!-- Homework Title -->
-    <label>Title</label>
+    <label><strong>Title</strong></label>
     <input type="text"
            name="title"
+           placeholder="Enter homework title"
            required
-           style="width:100%; padding:8px; margin-top:5px;">
+           style="
+                width:100%;
+                padding:8px;
+                margin-top:5px;
+                margin-bottom:10px;
+           ">
 
     <!-- Homework Description -->
-    <label style="margin-top:10px;">Description</label>
+    <label><strong>Description</strong></label>
     <textarea name="description"
               rows="4"
+              placeholder="Enter homework details"
               required
-              style="width:100%; padding:8px; margin-top:5px;"></textarea>
+              style="
+                width:100%;
+                padding:8px;
+                margin-top:5px;
+                margin-bottom:10px;
+              "></textarea>
 
     <!-- Due Date -->
-    <label style="margin-top:10px;">Due Date</label>
+    <label><strong>Due Date</strong></label>
     <input type="date"
            name="due_date"
            required
-           style="width:100%; padding:8px; margin-top:5px;">
+           style="
+                width:100%;
+                padding:8px;
+                margin-top:5px;
+                margin-bottom:15px;
+           ">
 
     <!-- Submit Button -->
     <button type="submit"
             style="
                 width:100%;
                 padding:10px;
-                margin-top:15px;
                 background-color:#2c7be5;
                 color:white;
                 border:none;
+                border-radius:4px;
                 cursor:pointer;
+                font-size:15px;
             ">
         ✅ Add Homework
     </button>
 </form>
+
+<!-- ===============================
+     BACK TO DASHBOARD
+     =============================== -->
+<div style="text-align:center; margin-top:10px;">
+    <a href="{% url 'teacher_dashboard' %}">
+        ⬅ Back to Dashboard
+    </a>
+</div>
 
 {% endblock %}

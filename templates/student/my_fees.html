@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>💰 My Fees</h2>
+<hr>
+
+<div style="margin-bottom:20px;">
+    <strong>Total Fees:</strong> ₹{{ total_amount }} <br>
+    <strong>Paid:</strong> ₹{{ paid_amount }} <br>
+    <strong>Pending:</strong> ₹{{ pending_amount }}
+</div>
+
+<table border="1" cellpadding="10" cellspacing="0">
+    <tr>
+        <th>Class</th>
+        <th>Month</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Paid On</th>
+    </tr>
+
+    {% for fee in fees %}
+    <tr>
+        <td>{{ fee.fee_structure.class_name }}</td>
+        <td>{{ fee.fee_structure.month }}</td>
+        <td>₹{{ fee.fee_structure.amount }}</td>
+
+        {% if fee.status == 'PAID' %}
+            <td style="color:green;"><strong>PAID</strong></td>
+            <td>{{ fee.paid_on }}</td>
+        {% else %}
+            <td style="color:red;"><strong>PENDING</strong></td>
+            <td>—</td>
+        {% endif %}
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="5">No fee records found.</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

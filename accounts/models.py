@@ -8,9 +8,10 @@ from django.conf import settings
 # ==================================================
 class User(AbstractUser):
     """
-    Custom User model
-    - AbstractUser se inherit kiya gaya hai
-    - role field add ki gayi hai (Admin / Teacher / Student)
+    Custom User Model
+    -----------------
+    - AbstractUser se inherit
+    - Role-based authentication system
     """
 
     ROLE_CHOICES = (
@@ -20,14 +21,13 @@ class User(AbstractUser):
     )
 
     role = models.CharField(
-        max_length=10,
+        max_length=20,
         choices=ROLE_CHOICES,
-        default='STUDENT',   # by default student
-        db_index=True        # role-based queries fast hongi
+        default='STUDENT',
+        db_index=True
     )
 
     def __str__(self):
-        # Admin panel aur debugging ke liye readable output
         return self.username
 
 
@@ -36,9 +36,30 @@ class User(AbstractUser):
 # ==================================================
 class TeacherProfile(models.Model):
     """
-    Teacher ka extra data store karne ke liye
-    User table clean rehti hai
+    Teacher Profile
+    ---------------
+    - One teacher = one user
+    - Class & section assignment
     """
+
+    DESIGNATION_CHOICES = (
+        ('PRINCIPAL', 'Principal'),
+        ('SENIOR', 'Senior Teacher'),
+        ('ASSISTANT', 'Assistant Teacher'),
+    )
+
+    CLASS_CHOICES = (
+        ('1', 'Class 1'), ('2', 'Class 2'), ('3', 'Class 3'),
+        ('4', 'Class 4'), ('5', 'Class 5'), ('6', 'Class 6'),
+        ('7', 'Class 7'), ('8', 'Class 8'), ('9', 'Class 9'),
+        ('10', 'Class 10'), ('11', 'Class 11'), ('12', 'Class 12'),
+    )
+
+    SECTION_CHOICES = (
+        ('A', 'Section A'),
+        ('B', 'Section B'),
+        ('C', 'Section C'),
+    )
 
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -46,9 +67,24 @@ class TeacherProfile(models.Model):
         related_name='teacher_profile'
     )
 
+    designation = models.CharField(
+        max_length=20,
+        choices=DESIGNATION_CHOICES,
+        default='ASSISTANT'
+    )
+
     subject = models.CharField(
-        max_length=100,
-        help_text="Subject taught by the teacher"
+        max_length=100
+    )
+
+    assigned_class = models.CharField(
+        max_length=2,
+        choices=CLASS_CHOICES
+    )
+
+    assigned_section = models.CharField(
+        max_length=1,
+        choices=SECTION_CHOICES
     )
 
     phone = models.CharField(
@@ -58,7 +94,7 @@ class TeacherProfile(models.Model):
     )
 
     def __str__(self):
-        return f"Teacher: {self.user.username}"
+        return f"{self.user.username} | {self.subject} | {self.assigned_class}{self.assigned_section}"
 
 
 # ==================================================
@@ -66,9 +102,24 @@ class TeacherProfile(models.Model):
 # ==================================================
 class StudentProfile(models.Model):
     """
-    Student ka extra data
-    Roll number, phone etc.
+    Student Profile
+    ---------------
+    - Roll number auto-generated from view
+    - Class + section wise unique roll no
     """
+
+    CLASS_CHOICES = (
+        ('1', 'Class 1'), ('2', 'Class 2'), ('3', 'Class 3'),
+        ('4', 'Class 4'), ('5', 'Class 5'), ('6', 'Class 6'),
+        ('7', 'Class 7'), ('8', 'Class 8'), ('9', 'Class 9'),
+        ('10', 'Class 10'), ('11', 'Class 11'), ('12', 'Class 12'),
+    )
+
+    SECTION_CHOICES = (
+        ('A', 'Section A'),
+        ('B', 'Section B'),
+        ('C', 'Section C'),
+    )
 
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -76,29 +127,42 @@ class StudentProfile(models.Model):
         related_name='student_profile'
     )
 
-    roll_no = models.CharField(
-        max_length=20,
-        unique=True,     # ek hi roll number repeat na ho
-        db_index=True
+    father_name = models.CharField(
+        max_length=100
     )
 
-    phone = models.CharField(
-        max_length=15,
-        blank=True,
-        null=True
+    contact_number = models.CharField(
+        max_length=15
     )
+
+    student_class = models.CharField(
+        max_length=2,
+        choices=CLASS_CHOICES
+    )
+
+    section = models.CharField(
+        max_length=1,
+        choices=SECTION_CHOICES
+    )
+
+    roll_no = models.PositiveIntegerField()
+
+    class Meta:
+        unique_together = ('student_class', 'section', 'roll_no')
+        ordering = ['student_class', 'section', 'roll_no']
 
     def __str__(self):
-        return f"Student: {self.user.username}"
+        return f"{self.user.username} | Class {self.student_class}{self.section} | Roll {self.roll_no}"
 
 
 # ==================================================
-# HOMEWORK MODEL
+# HOMEWORK MODEL  ✅ (DAY 9 CORE)
 # ==================================================
 class Homework(models.Model):
     """
-    Homework module
-    - Teacher homework add karega
+    Homework Model
+    --------------
+    - Teacher add karega
     - Student sirf view karega
     """
 
@@ -122,9 +186,9 @@ class Homework(models.Model):
     )
 
     class Meta:
-        ordering = ['due_date']   # nearest due date pehle
+        ordering = ['due_date']
         verbose_name = 'Homework'
         verbose_name_plural = 'Homeworks'
 
     def __str__(self):
-        return f"{self.title} (Due: {self.due_date})"
+        return f"{self.title} | Due: {self.due_date}"

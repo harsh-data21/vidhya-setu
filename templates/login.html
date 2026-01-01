@@ -1,50 +1,105 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Login</h2>
 
-<!-- Error / Message show -->
+<!-- ================================================= -->
+<!-- 🔐 LOGIN PAGE -->
+<!-- ================================================= -->
+<h2 style="text-align:center;">🔐 Login</h2>
+<hr>
+
+<!-- ================================================= -->
+<!-- ❌ ERROR / SUCCESS MESSAGES -->
+<!-- ================================================= -->
 {% if messages %}
     {% for message in messages %}
-        <p style="color:red;">{{ message }}</p>
+        <p style="color:red; text-align:center;">
+            {{ message }}
+        </p>
     {% endfor %}
 {% endif %}
 
-<form method="post" action="{% url 'login' %}">
+<!-- ================================================= -->
+<!-- 📝 LOGIN FORM -->
+<!-- ================================================= -->
+<form method="post" action="{% url 'login' %}"
+      style="width:350px; margin:30px auto;">
     {% csrf_token %}
 
+    <!-- USERNAME (IMPORTANT) -->
+    <!-- Login hamesha USERNAME se hoga, Roll No se nahi -->
     <div>
-        <label>Username</label><br>
-        <input type="text" name="username" placeholder="Enter username" required>
+        <label><strong>Username</strong></label><br>
+        <input
+            type="text"
+            name="username"
+            placeholder="Enter your username"
+            required
+            style="width:100%; padding:8px;"
+        >
     </div>
 
     <br>
 
+    <!-- PASSWORD -->
     <div>
-        <label>Password</label><br>
-        <input type="password" id="password" name="password" placeholder="Enter password" required>
+        <label><strong>Password</strong></label><br>
+        <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            required
+            style="width:100%; padding:8px;"
+        >
     </div>
 
-    <!-- 👁 Show / Hide Password -->
-    <div style="margin-top:5px;">
-        <input type="checkbox" id="showPassword" onclick="togglePassword()">
+    <!-- 👁 SHOW / HIDE PASSWORD -->
+    <div style="margin-top:6px;">
+        <input
+            type="checkbox"
+            id="showPassword"
+            onclick="togglePassword()"
+        >
         <label for="showPassword">Show Password</label>
     </div>
 
     <br>
 
-    <button type="submit">Login</button>
+    <!-- SUBMIT -->
+    <button type="submit"
+            style="
+                width:100%;
+                padding:10px;
+                background:#2c7be5;
+                color:white;
+                border:none;
+                cursor:pointer;
+            ">
+        🔓 Login
+    </button>
 </form>
 
-<!-- JS -->
+<hr>
+
+<!-- ================================================= -->
+<!-- 🎓 STUDENT REGISTRATION -->
+<!-- ================================================= -->
+<p style="text-align:center;">
+    New Student?
+    <a href="{% url 'student_register' %}">
+        Register here
+    </a>
+</p>
+
+<!-- ================================================= -->
+<!-- 📜 JAVASCRIPT -->
+<!-- ================================================= -->
 <script>
 function togglePassword() {
     const passwordField = document.getElementById("password");
-    if (passwordField.type === "password") {
-        passwordField.type = "text";
-    } else {
-        passwordField.type = "password";
-    }
+    passwordField.type =
+        passwordField.type === "password" ? "text" : "password";
 }
 </script>
 

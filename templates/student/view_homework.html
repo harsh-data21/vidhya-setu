@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ===============================
+     PAGE TITLE
+     =============================== -->
+<h2 style="text-align:center; margin-top:20px;">
+    📚 My Homework
+</h2>
+
+<!-- ===============================
+     HOMEWORK LIST
+     =============================== -->
+<div style="width:70%; margin:30px auto;">
+
+    {% for hw in homework %}
+        <div style="
+            border:1px solid #ddd;
+            padding:15px;
+            margin-bottom:15px;
+            border-radius:6px;
+            background:#fafafa;
+        ">
+            <h3 style="margin-bottom:5px;">
+                📘 {{ hw.title }}
+            </h3>
+
+            <p style="margin:8px 0;">
+                <strong>Description:</strong><br>
+                {{ hw.description }}
+            </p>
+
+            <p style="color:#555;">
+                ⏰ <strong>Due Date:</strong> {{ hw.due_date }}
+            </p>
+        </div>
+
+    {% empty %}
+        <p style="text-align:center; color:#888;">
+            No homework assigned yet.
+        </p>
+    {% endfor %}
+
+</div>
+
+<!-- ===============================
+     BACK TO DASHBOARD
+     =============================== -->
+<div style="text-align:center; margin-top:20px;">
+    <a href="{% url 'student_dashboard' %}">
+        ⬅ Back to Dashboard
+    </a>
+</div>
+
+{% endblock %}

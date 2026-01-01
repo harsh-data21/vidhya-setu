@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponseForbidden
 
-from .models import Homework
+from .models import User, Homework, StudentProfile
 
 
 # ==================================================
@@ -13,7 +13,6 @@ from .models import Homework
 def home(request):
     """
     Public home page
-    - Login se pehle sab users ke liye accessible
     """
     return render(request, 'home.html')
 
@@ -23,12 +22,12 @@ def home(request):
 # ==================================================
 def login_view(request):
     """
-    Handles user login:
-    - Username & password authenticate karta hai
-    - Role ke basis par dashboard redirect karta hai
+    Handles user login
+    - Username & password authenticate
+    - Role based dashboard redirect
     """
 
-    # Agar user already logged in hai → direct dashboard bhejo
+    # Already logged-in user
     if request.user.is_authenticated:
         if request.user.role == 'ADMIN':
             return redirect('admin_dashboard')
@@ -37,25 +36,19 @@ def login_view(request):
         else:
             return redirect('student_dashboard')
 
-    # Login form submit hone par
     if request.method == "POST":
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '').strip()
 
-        # Django built-in authentication
         user = authenticate(request, username=username, password=password)
 
-        if user is not None:
-
-            # Extra security: inactive user login na kare
+        if user:
             if not user.is_active:
                 messages.error(request, "Your account is inactive")
                 return redirect('login')
 
-            # Login success
             login(request, user)
 
-            # Role-based dashboard redirect
             if user.role == 'ADMIN':
                 return redirect('admin_dashboard')
             elif user.role == 'TEACHER':
@@ -63,10 +56,8 @@ def login_view(request):
             else:
                 return redirect('student_dashboard')
 
-        else:
-            messages.error(request, "Invalid username or password")
+        messages.error(request, "Invalid username or password")
 
-    # GET request → login page show
     return render(request, 'login.html')
 
 
@@ -75,63 +66,107 @@ def login_view(request):
 # ==================================================
 @login_required
 def logout_view(request):
-    """
-    User logout:
-    - Session clear karta hai
-    - Login page par redirect karta hai
-    """
     logout(request)
     return redirect('login')
 
 
 # ==================================================
-# ROLE BASED DASHBOARDS (SECURE)
+# ROLE BASED DASHBOARDS
 # ==================================================
-
 @login_required
 def admin_dashboard(request):
-    """
-    Admin dashboard:
-    - Sirf ADMIN role allowed
-    """
     if request.user.role != 'ADMIN':
         return HttpResponseForbidden("Access Denied")
 
-    return render(request, 'dashboard/dashboard.html', {
-        'role': 'Admin'
-    })
+    return render(request, 'dashboard/dashboard.html', {'role': 'Admin'})
 
 
 @login_required
 def teacher_dashboard(request):
-    """
-    Teacher dashboard:
-    - Sirf TEACHER role allowed
-    """
     if request.user.role != 'TEACHER':
         return HttpResponseForbidden("Access Denied")
 
-    return render(request, 'dashboard/dashboard.html', {
-        'role': 'Teacher'
-    })
+    return render(request, 'dashboard/dashboard.html', {'role': 'Teacher'})
 
 
 @login_required
 def student_dashboard(request):
-    """
-    Student dashboard:
-    - Sirf STUDENT role allowed
-    """
     if request.user.role != 'STUDENT':
         return HttpResponseForbidden("Access Denied")
 
-    return render(request, 'dashboard/dashboard.html', {
-        'role': 'Student'
+    return render(request, 'dashboard/dashboard.html', {'role': 'Student'})
+
+
+# ==================================================
+# STUDENT REGISTRATION (AUTO ROLL)
+# ==================================================
+def student_register(request):
+    """
+    Student Registration
+    - Roll number auto-generated (class + section wise)
+    """
+
+    CLASS_CHOICES = ['1','2','3','4','5','6','7','8','9','10','11','12']
+
+    if request.method == "POST":
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '').strip()
+        father_name = request.POST.get('father_name', '').strip()
+        contact_number = request.POST.get('contact_number', '').strip()
+        student_class = request.POST.get('student_class')
+        section = request.POST.get('section')
+
+        # Validation
+        if not all([username, password, father_name, contact_number]):
+            messages.error(request, "All fields are required")
+            return redirect('student_register')
+
+        if not contact_number.isdigit() or len(contact_number) < 10:
+            messages.error(request, "Enter valid contact number")
+            return redirect('student_register')
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists")
+            return redirect('student_register')
+
+        # Auto roll number
+        last_student = StudentProfile.objects.filter(
+            student_class=student_class,
+            section=section
+        ).order_by('-roll_no').first()
+
+        roll_no = last_student.roll_no + 1 if last_student else 1
+
+        # Create user
+        user = User.objects.create_user(
+            username=username,
+            password=password,
+            role='STUDENT'
+        )
+
+        # Create student profile
+        StudentProfile.objects.create(
+            user=user,
+            father_name=father_name,
+            contact_number=contact_number,
+            student_class=student_class,
+            section=section,
+            roll_no=roll_no
+        )
+
+        messages.success(
+            request,
+            f"Student registered successfully. Roll No: {roll_no}"
+        )
+        return redirect('login')
+
+    return render(request, 'register/student_register.html', {
+        'classes': CLASS_CHOICES
     })
 
 
 # ==================================================
-# DAY 5 / DAY 6 : HOMEWORK MODULE
+# HOMEWORK MODULE  ✅ STEP 2 COMPLETE
 # ==================================================
 
 # --------------------
@@ -140,26 +175,31 @@ def student_dashboard(request):
 @login_required
 def add_homework(request):
     """
-    Homework add karne ka view:
-    - Sirf TEACHER homework add kar sakta hai
-    - Homework teacher se linked hota hai
+    Teacher homework add karega
     """
 
     if request.user.role != 'TEACHER':
         return HttpResponseForbidden("Access Denied")
 
     if request.method == "POST":
+        title = request.POST.get('title', '').strip()
+        description = request.POST.get('description', '').strip()
+        due_date = request.POST.get('due_date')
+
+        if not all([title, description, due_date]):
+            messages.error(request, "All fields are required")
+            return redirect('add_homework')
+
         Homework.objects.create(
             teacher=request.user,
-            title=request.POST.get('title'),
-            description=request.POST.get('description'),
-            due_date=request.POST.get('due_date')
+            title=title,
+            description=description,
+            due_date=due_date
         )
 
         messages.success(request, "Homework added successfully")
         return redirect('teacher_dashboard')
 
-    # GET request → homework add form
     return render(request, 'teacher/add_homework.html')
 
 
@@ -169,9 +209,7 @@ def add_homework(request):
 @login_required
 def view_homework(request):
     """
-    Homework view karne ka view:
-    - Sirf STUDENT homework dekh sakta hai
-    - Latest homework sabse upar show hota hai
+    Student homework view karega
     """
 
     if request.user.role != 'STUDENT':

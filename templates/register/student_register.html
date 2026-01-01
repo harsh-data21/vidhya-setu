@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>🎓 Student Registration</h2>
+<hr>
+
+{% if messages %}
+    {% for message in messages %}
+        <p style="color:red;">{{ message }}</p>
+    {% endfor %}
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+
+    <label><strong>Username</strong></label><br>
+    <input type="text" name="username" required>
+    <br><br>
+
+    <label><strong>Password</strong></label><br>
+    <input type="password" name="password" required>
+    <br><br>
+
+    <label><strong>Father's Name</strong></label><br>
+    <input type="text" name="father_name" required>
+    <br><br>
+
+    <label><strong>Parent Contact Number</strong></label><br>
+    <input type="text" name="contact_number" pattern="[0-9]{10}" required>
+    <br><br>
+
+    <label><strong>Class</strong></label><br>
+    <select name="student_class" required>
+        {% for cls in classes %}
+            <option value="{{ cls }}">Class {{ cls }}</option>
+        {% endfor %}
+    </select>
+    <br><br>
+
+    <label><strong>Section</strong></label><br>
+    <select name="section" required>
+        <option value="A">Section A</option>
+        <option value="B">Section B</option>
+        <option value="C">Section C</option>
+    </select>
+    <br><br>
+
+    <p style="color:green;">
+        📌 Roll number will be automatically assigned by the system
+    </p>
+
+    <button type="submit">✅ Register Student</button>
+</form>
+
+{% endblock %}

@@ -3,11 +3,13 @@
 {% block content %}
 
 <!-- ================================================= -->
-<!-- 📊 Dashboard Heading -->
+<!-- 📊 DASHBOARD HEADING -->
 <!-- ================================================= -->
-<h2>{{ role }} Dashboard</h2>
+<h2 style="text-align:center; margin-top:20px;">
+    {{ role }} Dashboard
+</h2>
 
-<p>
+<p style="text-align:center;">
     Welcome, <strong>{{ request.user.username }}</strong>
 </p>
 
@@ -20,16 +22,10 @@
 
     <h4>👑 Admin Actions</h4>
     <ul>
-        <!-- Future scope -->
-        <li>Manage Users</li>
-        <li>Create Notices</li>
-
-        <!-- Attendance Report -->
-        <li>
-            <a href="{% url 'monthly_attendance_report' %}">
-                📊 Monthly Attendance Report
-            </a>
-        </li>
+        <li>👥 Manage Users (Coming Soon)</li>
+        <li>📢 Create Notices (Coming Soon)</li>
+        <li>📊 Monthly Attendance Report (Coming Soon)</li>
+        <li>💰 Fees Reports (Coming Soon)</li>
     </ul>
 
 <!-- ================================================= -->
@@ -39,23 +35,16 @@
 
     <h4>👨‍🏫 Teacher Actions</h4>
     <ul>
-        <!-- Mark daily attendance -->
         <li>
-            <a href="{% url 'mark_attendance' %}">
-                📋 Mark Attendance
+            <a href="{% url 'add_homework' %}">
+                📘 Add Homework
             </a>
         </li>
 
-        <!-- View monthly report -->
-        <li>
-            <a href="{% url 'monthly_attendance_report' %}">
-                📊 Monthly Attendance Report
-            </a>
-        </li>
-
-        <!-- Future features -->
-        <li>Upload Marks</li>
-        <li>View Students</li>
+        <li>📋 Mark Attendance (Coming Soon)</li>
+        <li>📊 Monthly Attendance Report (Coming Soon)</li>
+        <li>📝 Upload Marks (Coming Soon)</li>
+        <li>👨‍🎓 View Students (Coming Soon)</li>
     </ul>
 
 <!-- ================================================= -->
@@ -65,16 +54,22 @@
 
     <h4>👨‍🎓 Student Actions</h4>
     <ul>
-        <!-- View own attendance -->
         <li>
-            <a href="{% url 'student_attendance' %}">
-                📊 View Attendance
+            <a href="{% url 'view_homework' %}">
+                📚 View Homework
             </a>
         </li>
 
-        <!-- Future features -->
-        <li>Check Marks</li>
-        <li>Read Notices</li>
+        <!-- 💰 FEES -->
+        <li>
+            <a href="{% url 'student_fees' %}">
+                💰 My Fees
+            </a>
+        </li>
+
+        <li>📊 View Attendance (Coming Soon)</li>
+        <li>📝 Check Marks (Coming Soon)</li>
+        <li>📢 Read Notices (Coming Soon)</li>
     </ul>
 
 {% endif %}
@@ -82,8 +77,12 @@
 <hr>
 
 <!-- ================================================= -->
-<!-- 🚪 Logout -->
+<!-- 🚪 LOGOUT -->
 <!-- ================================================= -->
-<a href="{% url 'logout' %}">🚪 Logout</a>
+<div style="text-align:center;">
+    <a href="{% url 'logout' %}">
+        🚪 Logout
+    </a>
+</div>
 
 {% endblock %}
