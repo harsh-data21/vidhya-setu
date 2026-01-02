@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 
 class Attendance(models.Model):
@@ -35,8 +36,11 @@ class Attendance(models.Model):
 
     # --------------------
     # Attendance Date
+    # Default = today (BEST PRACTICE)
     # --------------------
-    date = models.DateField()
+    date = models.DateField(
+        default=timezone.now
+    )
 
     # --------------------
     # Attendance Status
@@ -89,7 +93,7 @@ class Attendance(models.Model):
         unique_together = ('student', 'date')
 
         # Latest attendance first
-        ordering = ['-date']
+        ordering = ['-date', 'student']
 
         # Admin display names
         verbose_name = 'Attendance'

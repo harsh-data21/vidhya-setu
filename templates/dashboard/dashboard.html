@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
-
 {% block content %}
 
 <!-- ================================================= -->
 <!-- 📊 DASHBOARD HEADING -->
 <!-- ================================================= -->
 <h2 style="text-align:center; margin-top:20px;">
-    {{ role }} Dashboard
+    {{ request.user.role }} Dashboard
 </h2>
 
 <p style="text-align:center;">
@@ -18,59 +17,116 @@
 <!-- ================================================= -->
 <!-- 👑 ADMIN DASHBOARD -->
 <!-- ================================================= -->
-{% if role == 'Admin' %}
+{% if request.user.role == 'ADMIN' %}
 
-    <h4>👑 Admin Actions</h4>
-    <ul>
-        <li>👥 Manage Users (Coming Soon)</li>
-        <li>📢 Create Notices (Coming Soon)</li>
-        <li>📊 Monthly Attendance Report (Coming Soon)</li>
-        <li>💰 Fees Reports (Coming Soon)</li>
-    </ul>
+<h4>👑 Admin Actions</h4>
+<ul>
+    <li>
+        <a href="/admin/accounts/user/" target="_blank">
+            👥 Manage Users
+        </a>
+    </li>
+
+    <li>
+        <a href="{% url 'notice_list' %}">
+            📢 View Notices
+        </a>
+    </li>
+
+    <li>
+        <a href="{% url 'fees_report' %}">
+            💰 Fees Report
+        </a>
+    </li>
+
+    <li>
+        <a href="{% url 'monthly_attendance_report' %}">
+            📊 Monthly Attendance Report
+        </a>
+    </li>
+</ul>
 
 <!-- ================================================= -->
 <!-- 👨‍🏫 TEACHER DASHBOARD -->
 <!-- ================================================= -->
-{% elif role == 'Teacher' %}
+{% elif request.user.role == 'TEACHER' %}
 
-    <h4>👨‍🏫 Teacher Actions</h4>
-    <ul>
-        <li>
-            <a href="{% url 'add_homework' %}">
-                📘 Add Homework
-            </a>
-        </li>
+<h4>👨‍🏫 Teacher Actions</h4>
+<ul>
+    <li>
+        <a href="{% url 'add_homework' %}">
+            📘 Add Homework
+        </a>
+    </li>
 
-        <li>📋 Mark Attendance (Coming Soon)</li>
-        <li>📊 Monthly Attendance Report (Coming Soon)</li>
-        <li>📝 Upload Marks (Coming Soon)</li>
-        <li>👨‍🎓 View Students (Coming Soon)</li>
-    </ul>
+    <li>
+        <a href="{% url 'notice_list' %}">
+            📢 View Notices
+        </a>
+    </li>
+
+    <li>
+        <a href="{% url 'fees_report' %}">
+            💰 Fees Report
+        </a>
+    </li>
+
+    <li>
+        <a href="{% url 'mark_attendance' %}">
+            📋 Mark Attendance
+        </a>
+    </li>
+
+    <li>
+        <a href="{% url 'upload_marks' %}">
+            📝 Upload Marks
+        </a>
+    </li>
+</ul>
 
 <!-- ================================================= -->
 <!-- 👨‍🎓 STUDENT DASHBOARD -->
 <!-- ================================================= -->
+{% elif request.user.role == 'STUDENT' %}
+
+<h4>👨‍🎓 Student Actions</h4>
+<ul>
+    <li>
+        <a href="{% url 'view_homework' %}">
+            📚 View Homework
+        </a>
+    </li>
+
+    <li>
+        <a href="{% url 'notice_list' %}">
+            📢 Read Notices
+        </a>
+    </li>
+
+    <li>
+        <a href="{% url 'student_fees' %}">
+            💰 My Fees
+        </a>
+    </li>
+
+    <li>
+        <a href="{% url 'student_attendance' %}">
+            📊 View Attendance
+        </a>
+    </li>
+
+    <li>
+        📄 <a href="{% url 'my_marks' %}">
+            Check Marks
+        </a>
+    </li>
+</ul>
+
 {% else %}
 
-    <h4>👨‍🎓 Student Actions</h4>
-    <ul>
-        <li>
-            <a href="{% url 'view_homework' %}">
-                📚 View Homework
-            </a>
-        </li>
-
-        <!-- 💰 FEES -->
-        <li>
-            <a href="{% url 'student_fees' %}">
-                💰 My Fees
-            </a>
-        </li>
-
-        <li>📊 View Attendance (Coming Soon)</li>
-        <li>📝 Check Marks (Coming Soon)</li>
-        <li>📢 Read Notices (Coming Soon)</li>
-    </ul>
+<p style="color:red; text-align:center;">
+    ⚠️ Role not assigned. Please contact admin.
+</p>
 
 {% endif %}
 

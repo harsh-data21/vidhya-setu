@@ -15,36 +15,42 @@ class AttendanceAdmin(admin.ModelAdmin):
     # 📋 Admin list page par dikhne wale columns
     # ==================================================
     list_display = (
-        'student',      # Kaunsa student
-        'date',         # Kis date ki attendance
-        'status',       # P / A (Present / Absent)
-        'marked_by',    # Kis teacher ne mark ki
-        'created_at',   # Kab record create hua
+        'student',          # Kaunsa student
+        'date',             # Kis date ki attendance
+        'status_display',   # Present / Absent (human readable)
+        'marked_by',        # Kis teacher ne mark ki
+        'created_at',       # Kab record create hua
     )
 
     # ==================================================
     # 🎯 Right sidebar filters
     # ==================================================
     list_filter = (
-        'status',       # Present / Absent filter
-        'date',         # Date-wise filter
+        'status',           # Present / Absent
+        'date',             # Date-wise
+        'marked_by',        # Teacher-wise
     )
 
     # ==================================================
     # 🔍 Search box configuration
     # ==================================================
     search_fields = (
-        'student__username',    # Student username se search
-        'marked_by__username',  # Teacher username se search
+        'student__username',
+        'marked_by__username',
     )
+
+    # ==================================================
+    # ⚡ Query optimization
+    # ==================================================
+    list_select_related = ('student', 'marked_by')
 
     # ==================================================
     # ⬇️ Default ordering (latest attendance upar)
     # ==================================================
-    ordering = ('-date',)
+    ordering = ('-date', 'student')
 
     # ==================================================
-    # 🔒 Read-only fields (data safety ke liye)
+    # 🔒 Read-only fields (data safety)
     # ==================================================
     readonly_fields = (
         'created_at',
@@ -52,6 +58,18 @@ class AttendanceAdmin(admin.ModelAdmin):
     )
 
     # ==================================================
-    # 📄 Pagination (ek page par records)
+    # 📄 Pagination
     # ==================================================
     list_per_page = 25
+
+    # ==================================================
+    # 📅 Date hierarchy (top navigation)
+    # ==================================================
+    date_hierarchy = 'date'
+
+    # ==================================================
+    # 🎨 Custom display helpers
+    # ==================================================
+    def status_display(self, obj):
+        return obj.get_status_display()
+    status_display.short_description = 'Status'

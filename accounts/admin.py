@@ -1,5 +1,11 @@
 from django.contrib import admin
-from .models import User, TeacherProfile, StudentProfile, Homework
+from .models import (
+    User,
+    TeacherProfile,
+    StudentProfile,
+    Homework,
+    Notice
+)
 
 
 # ==================================================
@@ -9,8 +15,6 @@ from .models import User, TeacherProfile, StudentProfile, Homework
 class UserAdmin(admin.ModelAdmin):
     """
     Admin configuration for Custom User model
-    - Username, email, role dikhata hai
-    - Role ke basis par filter
     """
 
     list_display = (
@@ -44,7 +48,6 @@ class UserAdmin(admin.ModelAdmin):
 class TeacherProfileAdmin(admin.ModelAdmin):
     """
     Admin configuration for TeacherProfile
-    - Teacher ki designation, subject, class assignment
     """
 
     list_display = (
@@ -83,8 +86,6 @@ class TeacherProfileAdmin(admin.ModelAdmin):
 class StudentProfileAdmin(admin.ModelAdmin):
     """
     Admin configuration for StudentProfile
-    - Same name students supported
-    - Father name + contact number visible
     """
 
     list_display = (
@@ -124,7 +125,6 @@ class StudentProfileAdmin(admin.ModelAdmin):
 class HomeworkAdmin(admin.ModelAdmin):
     """
     Admin configuration for Homework
-    - Teacher wise homework tracking
     """
 
     list_display = (
@@ -145,6 +145,36 @@ class HomeworkAdmin(admin.ModelAdmin):
     )
 
     ordering = ('due_date',)
+
+
+# ==================================================
+# NOTICE ADMIN  ✅ (MISSING PART – NOW ADDED)
+# ==================================================
+@admin.register(Notice)
+class NoticeAdmin(admin.ModelAdmin):
+    """
+    Admin configuration for Notice
+    """
+
+    list_display = (
+        'title',
+        'created_by',
+        'created_at',
+        'is_active',
+    )
+
+    list_filter = (
+        'is_active',
+        'created_at',
+    )
+
+    search_fields = (
+        'title',
+        'message',
+        'created_by__username',
+    )
+
+    ordering = ('-created_at',)
 
 
 # ==================================================

@@ -12,16 +12,16 @@
 <!-- ================================================= -->
 <h3>Attendance Summary</h3>
 
-<!-- Total working days -->
-<p>Total Days: <b>{{ total_days }}</b></p>
-
-<!-- Total present days -->
-<p>Present Days: <b>{{ present_days }}</b></p>
-
-<!-- Attendance percentage -->
 <p>
-    Attendance Percentage:
-    <b style="color: green;">{{ percentage }}%</b>
+    <strong>Total Days:</strong> {{ total_days }} <br>
+    <strong>Present Days:</strong> {{ present_days }} <br>
+    <strong>Attendance Percentage:</strong>
+    <span style="
+        font-weight: bold;
+        color: {% if percentage < 75 %}red{% else %}green{% endif %};
+    ">
+        {{ percentage }}%
+    </span>
 </p>
 
 <hr>
@@ -30,7 +30,7 @@
 <!-- 📋 ATTENDANCE RECORD TABLE -->
 <!-- ================================================= -->
 {% if records %}
-<table border="1" cellpadding="10" cellspacing="0" width="50%">
+<table border="1" cellpadding="10" cellspacing="0" style="width:70%;">
     <tr style="background-color: #f2f2f2;">
         <th>Date</th>
         <th>Status</th>
@@ -39,14 +39,14 @@
     {% for rec in records %}
     <tr>
         <!-- Attendance date -->
-        <td>{{ rec.date }}</td>
+        <td>{{ rec.date|date:"d M Y" }}</td>
 
         <!-- Attendance status -->
-        <td>
+        <td style="text-align:center; font-weight:bold;">
             {% if rec.status == "P" %}
-                <span style="color: green; font-weight: bold;">✅ Present</span>
+                <span style="color: green;">✅ Present</span>
             {% else %}
-                <span style="color: red; font-weight: bold;">❌ Absent</span>
+                <span style="color: red;">❌ Absent</span>
             {% endif %}
         </td>
     </tr>
@@ -54,7 +54,6 @@
 </table>
 
 {% else %}
-<!-- Jab koi attendance record na ho -->
 <p style="color: gray;">No attendance records found.</p>
 {% endif %}
 
@@ -63,6 +62,8 @@
 <!-- ================================================= -->
 <!-- 🔙 Back to Student Dashboard -->
 <!-- ================================================= -->
-<a href="{% url 'student_dashboard' %}">← Back to Dashboard</a>
+<a href="{% url 'student_dashboard' %}">
+    ← Back to Dashboard
+</a>
 
 {% endblock %}

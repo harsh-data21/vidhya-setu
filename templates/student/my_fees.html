@@ -4,19 +4,22 @@
 <h2>💰 My Fees</h2>
 <hr>
 
+<!-- ================= SUMMARY ================= -->
 <div style="margin-bottom:20px;">
     <strong>Total Fees:</strong> ₹{{ total_amount }} <br>
     <strong>Paid:</strong> ₹{{ paid_amount }} <br>
     <strong>Pending:</strong> ₹{{ pending_amount }}
 </div>
 
-<table border="1" cellpadding="10" cellspacing="0">
+<!-- ================= FEES TABLE ================= -->
+<table border="1" cellpadding="10" cellspacing="0" width="100%">
     <tr>
         <th>Class</th>
         <th>Month</th>
         <th>Amount</th>
         <th>Status</th>
         <th>Paid On</th>
+        <th>Action</th>
     </tr>
 
     {% for fee in fees %}
@@ -28,14 +31,30 @@
         {% if fee.status == 'PAID' %}
             <td style="color:green;"><strong>PAID</strong></td>
             <td>{{ fee.paid_on }}</td>
+            <td>
+                <a href="{% url 'fee_receipt' fee.id %}" target="_blank">
+                    🧾 Download Receipt
+                </a>
+            </td>
         {% else %}
             <td style="color:red;"><strong>PENDING</strong></td>
             <td>—</td>
+            <td>
+                <form method="post" action="{% url 'pay_fee' fee.id %}">
+                    {% csrf_token %}
+                    <button type="submit">
+                        💳 Pay Now
+                    </button>
+                </form>
+            </td>
         {% endif %}
     </tr>
+
     {% empty %}
     <tr>
-        <td colspan="5">No fee records found.</td>
+        <td colspan="6" style="text-align:center;">
+            No fee records found.
+        </td>
     </tr>
     {% endfor %}
 </table>

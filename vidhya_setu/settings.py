@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'attendance',
     'fees',
+    'marks'
 ]
 
 MIDDLEWARE = [

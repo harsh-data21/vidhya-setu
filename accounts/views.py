@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponseForbidden
 
-from .models import User, Homework, StudentProfile
+from .models import User, Homework, StudentProfile, Notice
 
 
 # ==================================================
@@ -116,7 +116,6 @@ def student_register(request):
         student_class = request.POST.get('student_class')
         section = request.POST.get('section')
 
-        # Validation
         if not all([username, password, father_name, contact_number]):
             messages.error(request, "All fields are required")
             return redirect('student_register')
@@ -129,7 +128,6 @@ def student_register(request):
             messages.error(request, "Username already exists")
             return redirect('student_register')
 
-        # Auto roll number
         last_student = StudentProfile.objects.filter(
             student_class=student_class,
             section=section
@@ -137,14 +135,12 @@ def student_register(request):
 
         roll_no = last_student.roll_no + 1 if last_student else 1
 
-        # Create user
         user = User.objects.create_user(
             username=username,
             password=password,
             role='STUDENT'
         )
 
-        # Create student profile
         StudentProfile.objects.create(
             user=user,
             father_name=father_name,
@@ -166,12 +162,8 @@ def student_register(request):
 
 
 # ==================================================
-# HOMEWORK MODULE  ✅ STEP 2 COMPLETE
+# HOMEWORK MODULE
 # ==================================================
-
-# --------------------
-# TEACHER: ADD HOMEWORK
-# --------------------
 @login_required
 def add_homework(request):
     """
@@ -203,9 +195,6 @@ def add_homework(request):
     return render(request, 'teacher/add_homework.html')
 
 
-# --------------------
-# STUDENT: VIEW HOMEWORK
-# --------------------
 @login_required
 def view_homework(request):
     """
@@ -219,4 +208,20 @@ def view_homework(request):
 
     return render(request, 'student/view_homework.html', {
         'homework': homework
+    })
+
+
+# ==================================================
+# NOTICE MODULE  ✅ FINAL
+# ==================================================
+@login_required
+def notice_list(request):
+    """
+    Student & Teacher notices view karenge
+    """
+
+    notices = Notice.objects.filter(is_active=True).order_by('-created_at')
+
+    return render(request, 'notice/notice_list.html', {
+        'notices': notices
     })

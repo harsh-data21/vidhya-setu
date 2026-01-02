@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>📊 My Marks</h2>
+<hr>
+
+{% if marks %}
+<table border="1" cellpadding="8" cellspacing="0" style="width:100%; text-align:center;">
+    <tr style="background:#f2f2f2;">
+        <th>Subject</th>
+        <th>Marks Obtained</th>
+        <th>Total Marks</th>
+        <th>Percentage</th>
+        <th>Grade</th>
+    </tr>
+
+    {% for m in marks %}
+    <tr>
+        <td>{{ m.subject.name }}</td>
+        <td>{{ m.marks_obtained }}</td>
+        <td>{{ m.max_marks }}</td>
+        <td>{{ m.percentage }}%</td>
+        <td>
+            {% if m.grade == "Fail" %}
+                <span style="color:red; font-weight:bold;">{{ m.grade }}</span>
+            {% else %}
+                <span style="color:green; font-weight:bold;">{{ m.grade }}</span>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% else %}
+    <p style="color:gray;">No marks uploaded yet.</p>
+{% endif %}
+
+{% endblock %}

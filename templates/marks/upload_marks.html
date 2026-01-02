@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>📝 Upload Marks</h2>
+
+<!-- ================= CLASS & SECTION INFO ================= -->
+<p style="font-weight:bold;">
+    Class {{ class_name }} | Section {{ section }}
+</p>
+
+<hr>
+
+<form method="post" novalidate>
+    {% csrf_token %}
+
+    <!-- ================= SUBJECT SELECT ================= -->
+    <label><strong>Select Subject:</strong></label><br>
+    <select name="subject" required>
+        <option value="">-- Select Subject --</option>
+        {% for subject in subjects %}
+            <option value="{{ subject.id }}">
+                {{ subject.name }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <br><br>
+
+    <!-- ================= TOTAL MARKS ================= -->
+    <label><strong>Total Marks of Exam:</strong></label><br>
+    <input
+        type="number"
+        name="max_marks"
+        placeholder="e.g. 70 / 80 / 100"
+        min="1"
+        required
+    >
+
+    <br><br>
+
+    <!-- ================= STUDENT MARKS TABLE ================= -->
+    <table border="1" cellpadding="8" cellspacing="0" style="width:100%;">
+        <tr style="background:#f2f2f2;">
+            <th>Roll No</th>
+            <th>Student Name</th>
+            <th>Marks Obtained</th>
+        </tr>
+
+        {% for student in students %}
+        <tr>
+            <!-- Roll number via student_profile -->
+            <td style="text-align:center;">
+                {{ student.student_profile.roll_no }}
+            </td>
+
+            <td>
+                {{ student.username }}
+            </td>
+
+            <td>
+                <input
+                    type="number"
+                    name="marks_{{ student.id }}"
+                    min="0"
+                    placeholder="Enter marks"
+                >
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <br>
+
+    <!-- ================= SUBMIT ================= -->
+    <button type="submit">Save Marks</button>
+</form>
+
+{% endblock %}

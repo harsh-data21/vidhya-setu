@@ -1,11 +1,14 @@
 {% extends 'base.html' %}
-
 {% block content %}
 
 <!-- ================================================= -->
 <!-- 📋 Page Heading -->
 <!-- ================================================= -->
-<h2>📋 Mark Attendance – {{ date }}</h2>
+<h2>📋 Mark Attendance</h2>
+
+<p style="font-weight:bold;">
+    Class {{ class_name }} | Section {{ section }} | Date {{ date }}
+</p>
 
 <!-- ================================================= -->
 <!-- ℹ️ Information Note -->
@@ -22,7 +25,6 @@
 <!-- ================================================= -->
 <form method="post">
     {% csrf_token %}
-    <!-- CSRF token: Django security ke liye mandatory -->
 
     <!-- =============================== -->
     <!-- 📅 Date Selector -->
@@ -40,42 +42,47 @@
 
     <!-- =============================== -->
     <!-- 👨‍🎓 Students Attendance Table -->
+    <!-- students = StudentProfile queryset -->
     <!-- =============================== -->
-    <table border="1" cellpadding="10" cellspacing="0" width="60%">
+    <table border="1" cellpadding="10" cellspacing="0" style="width:80%;">
         <tr style="background-color: #f2f2f2;">
+            <th>Roll No</th>
             <th>Student Name</th>
             <th>Present</th>
             <th>Absent</th>
         </tr>
 
-        {% for student in students %}
+        {% for sp in students %}
         <tr>
+            <!-- Roll number -->
+            <td style="text-align:center;">
+                {{ sp.roll_no }}
+            </td>
+
             <!-- Student username -->
-            <td>{{ student.username }}</td>
+            <td>
+                {{ sp.user.username }}
+            </td>
 
             <!-- ============================== -->
-            <!-- ✅ Present radio button -->
-            <!-- name = student.id
-                 value = 'P' (Present)
-                 Ye value views.py me status ke roop me jaati hai
-            -->
+            <!-- ✅ Present -->
+            <!-- name MUST match views.py -->
+            <!-- name="status_<user.id>" -->
             <td style="text-align: center;">
                 <input
                     type="radio"
-                    name="{{ student.id }}"
+                    name="status_{{ sp.user.id }}"
                     value="P"
+                    required
                 >
             </td>
 
             <!-- ============================== -->
-            <!-- ❌ Absent radio button -->
-            <!-- value = 'A' (Absent)
-                 Default Absent rakha gaya hai
-            -->
+            <!-- ❌ Absent (default) -->
             <td style="text-align: center;">
                 <input
                     type="radio"
-                    name="{{ student.id }}"
+                    name="status_{{ sp.user.id }}"
                     value="A"
                     checked
                 >
@@ -83,9 +90,8 @@
         </tr>
 
         {% empty %}
-        <!-- Agar koi student na ho -->
         <tr>
-            <td colspan="3" style="text-align:center;">
+            <td colspan="4" style="text-align:center;">
                 No students found.
             </td>
         </tr>

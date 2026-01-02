@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
+from django.utils import timezone
 
 
 # ==================================================
@@ -10,8 +11,7 @@ class User(AbstractUser):
     """
     Custom User Model
     -----------------
-    - AbstractUser se inherit
-    - Role-based authentication system
+    Role-based authentication system
     """
 
     ROLE_CHOICES = (
@@ -37,9 +37,6 @@ class User(AbstractUser):
 class TeacherProfile(models.Model):
     """
     Teacher Profile
-    ---------------
-    - One teacher = one user
-    - Class & section assignment
     """
 
     DESIGNATION_CHOICES = (
@@ -73,9 +70,7 @@ class TeacherProfile(models.Model):
         default='ASSISTANT'
     )
 
-    subject = models.CharField(
-        max_length=100
-    )
+    subject = models.CharField(max_length=100)
 
     assigned_class = models.CharField(
         max_length=2,
@@ -103,9 +98,6 @@ class TeacherProfile(models.Model):
 class StudentProfile(models.Model):
     """
     Student Profile
-    ---------------
-    - Roll number auto-generated from view
-    - Class + section wise unique roll no
     """
 
     CLASS_CHOICES = (
@@ -127,13 +119,9 @@ class StudentProfile(models.Model):
         related_name='student_profile'
     )
 
-    father_name = models.CharField(
-        max_length=100
-    )
+    father_name = models.CharField(max_length=100)
 
-    contact_number = models.CharField(
-        max_length=15
-    )
+    contact_number = models.CharField(max_length=15)
 
     student_class = models.CharField(
         max_length=2,
@@ -147,7 +135,7 @@ class StudentProfile(models.Model):
 
     roll_no = models.PositiveIntegerField()
 
-    class Meta:
+    class Meta:   # ❌ FIXED (pehle galat likha tha)
         unique_together = ('student_class', 'section', 'roll_no')
         ordering = ['student_class', 'section', 'roll_no']
 
@@ -156,14 +144,11 @@ class StudentProfile(models.Model):
 
 
 # ==================================================
-# HOMEWORK MODEL  ✅ (DAY 9 CORE)
+# HOMEWORK MODEL
 # ==================================================
 class Homework(models.Model):
     """
     Homework Model
-    --------------
-    - Teacher add karega
-    - Student sirf view karega
     """
 
     teacher = models.ForeignKey(
@@ -173,17 +158,13 @@ class Homework(models.Model):
         limit_choices_to={'role': 'TEACHER'}
     )
 
-    title = models.CharField(
-        max_length=200
-    )
+    title = models.CharField(max_length=200)
 
     description = models.TextField()
 
     due_date = models.DateField()
 
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['due_date']
@@ -192,3 +173,39 @@ class Homework(models.Model):
 
     def __str__(self):
         return f"{self.title} | Due: {self.due_date}"
+
+
+# ==================================================
+# NOTICE MODEL
+# ==================================================
+class Notice(models.Model):
+    """
+    Notice Model
+    ------------
+    - Admin / Teacher create karega
+    - Student / Teacher view karega
+    """
+
+    title = models.CharField(max_length=200)
+
+    message = models.TextField()
+
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='notices'
+    )
+
+    created_at = models.DateTimeField(default=timezone.now)
+
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Notice'
+        verbose_name_plural = 'Notices'
+
+    def __str__(self):
+        return self.title

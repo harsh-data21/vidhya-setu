@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 style="text-align:center; margin-top:20px;">
+    📊 Fees Report
+</h2>
+
+<p style="text-align:center;">
+    Overview of all student fees
+</p>
+
+<hr>
+
+<!-- ================= FILTER + EXPORT ================= -->
+<form method="get" style="margin-bottom:20px; display:inline-block;">
+    <label><strong>Month:</strong></label>
+    <select name="month">
+        <option value="">All</option>
+        {% for month in months %}
+            <option value="{{ month }}"
+                {% if month == selected_month %}selected{% endif %}>
+                {{ month }}
+            </option>
+        {% endfor %}
+    </select>
+
+    &nbsp;&nbsp;
+
+    <label><strong>Class:</strong></label>
+    <select name="class_name">
+        <option value="">All</option>
+        {% for cls in classes %}
+            <option value="{{ cls }}"
+                {% if cls == selected_class %}selected{% endif %}>
+                {{ cls }}
+            </option>
+        {% endfor %}
+    </select>
+
+    &nbsp;&nbsp;
+    <button type="submit">🔍 Filter</button>
+
+    &nbsp;
+    <a href="{% url 'fees_report' %}">🔄 Reset</a>
+</form>
+
+&nbsp;&nbsp;&nbsp;
+
+<a href="{% url 'export_fees_excel' %}">
+    📥 Download Excel
+</a>
+
+<hr>
+
+<!-- ================= SUMMARY ================= -->
+<div style="margin-bottom:20px;">
+    <strong>Total Collected:</strong> ₹{{ total_collected }} <br>
+    <strong>Total Pending:</strong> ₹{{ total_pending }}
+</div>
+
+<hr>
+
+<!-- ================= CHARTS ================= -->
+<h3>📈 Fee Analytics</h3>
+
+<div style="display:flex; gap:40px; flex-wrap:wrap; margin-bottom:30px;">
+
+    <!-- Pie Chart -->
+    <div style="width:300px;">
+        <h4>Paid vs Pending</h4>
+        <canvas id="pieChart"></canvas>
+    </div>
+
+    <!-- Bar Chart -->
+    <div style="width:400px;">
+        <h4>Class-wise Collection</h4>
+        <canvas id="barChart"></canvas>
+    </div>
+
+</div>
+
+<hr>
+
+<!-- ================= FEES TABLE ================= -->
+<table border="1" cellpadding="10" cellspacing="0" width="100%">
+    <tr>
+        <th>Student</th>
+        <th>Father Name</th>
+        <th>Contact No.</th>
+        <th>Class</th>
+        <th>Month</th>
+        <th>Amount</th>
+        <th>Status</th>
+    </tr>
+
+    {% for fee in fees %}
+    <tr>
+        <td>{{ fee.student.username }}</td>
+
+        <!-- Safe student profile access -->
+        <td>{{ fee.student.studentprofile.father_name|default:"—" }}</td>
+        <td>{{ fee.student.studentprofile.phone|default:"—" }}</td>
+
+        <td>{{ fee.fee_structure.class_name }}</td>
+        <td>{{ fee.fee_structure.month }}</td>
+        <td>₹{{ fee.fee_structure.amount }}</td>
+
+        {% if fee.status == 'PAID' %}
+            <td style="color:green;"><strong>PAID</strong></td>
+        {% else %}
+            <td style="color:red;"><strong>PENDING</strong></td>
+        {% endif %}
+    </tr>
+
+    {% empty %}
+    <tr>
+        <td colspan="7" style="text-align:center;">
+            No fee records found.
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<hr>
+
+<!-- ================= BACK BUTTON ================= -->
+<div style="text-align:center; margin-top:20px;">
+    <a href="javascript:history.back();">
+        ⬅ Back to Dashboard
+    </a>
+</div>
+
+<!-- ================= CHART.JS ================= -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Pie Chart
+    const pieCtx = document.getElementById('pieChart');
+    new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+            labels: {{ pie_labels|safe }},
+            datasets: [{
+                data: {{ pie_values|safe }}
+            }]
+        }
+    });
+
+    // Bar Chart
+    const barCtx = document.getElementById('barChart');
+    new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ bar_labels|safe }},
+            datasets: [{
+                label: 'Total Fees',
+                data: {{ bar_values|safe }}
+            }]
+        }
+    });
+</script>
+
+{% endblock %}

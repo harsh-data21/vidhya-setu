@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>📢 School Notices</h2>
+<hr>
+
+{% if notices %}
+    <ul>
+        {% for notice in notices %}
+            <li>
+                <strong>{{ notice.title }}</strong><br>
+                {{ notice.message }}<br>
+                <small>{{ notice.created_at }}</small>
+            </li>
+            <hr>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No notices available.</p>
+{% endif %}
+{% endblock %}
