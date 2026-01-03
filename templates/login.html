@@ -22,12 +22,13 @@
 <!-- ================================================= -->
 <!-- 📝 LOGIN FORM -->
 <!-- ================================================= -->
-<form method="post" action="{% url 'login' %}"
+<form method="post"
+      action="{% url 'login' %}"
       style="width:350px; margin:30px auto;">
+
     {% csrf_token %}
 
-    <!-- USERNAME (IMPORTANT) -->
-    <!-- Login hamesha USERNAME se hoga, Roll No se nahi -->
+    <!-- USERNAME -->
     <div>
         <label><strong>Username</strong></label><br>
         <input
@@ -80,14 +81,12 @@
     </button>
 </form>
 
-<hr>
-
 <!-- ================================================= -->
-<!-- 🎓 STUDENT REGISTRATION -->
+<!-- 🎓 STUDENT REGISTRATION LINK (FIXED & WORKING) -->
 <!-- ================================================= -->
-<p style="text-align:center;">
+<p style="text-align:center; margin-top:15px;">
     New Student?
-    <a href="{% url 'student_register' %}">
+    <a href="{% url 'student_register' %}" style="font-weight:bold;">
         Register here
     </a>
 </p>

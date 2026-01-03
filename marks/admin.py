@@ -31,11 +31,9 @@ class StudentMarkAdmin(admin.ModelAdmin):
         'student',
         'subject',
         'marks_obtained',
-        'max_marks',
+        'total_marks',
         'percentage_display',
         'grade_display',
-        'uploaded_by',
-        'created_at',
     )
 
     # -----------------------------
@@ -43,7 +41,6 @@ class StudentMarkAdmin(admin.ModelAdmin):
     # -----------------------------
     list_filter = (
         'subject',
-        'uploaded_by',
     )
 
     # -----------------------------
@@ -51,23 +48,18 @@ class StudentMarkAdmin(admin.ModelAdmin):
     # -----------------------------
     search_fields = (
         'student__username',
+        'student__first_name',
+        'student__last_name',
         'subject__name',
-    )
-
-    # -----------------------------
-    # Read-only fields
-    # -----------------------------
-    readonly_fields = (
-        'created_at',
-        'updated_at',
-        'percentage_display',
-        'grade_display',
     )
 
     # -----------------------------
     # Ordering
     # -----------------------------
-    ordering = ('student__username', 'subject__name')
+    ordering = (
+        'student__username',
+        'subject__name',
+    )
 
     # -----------------------------
     # Custom display methods

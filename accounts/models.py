@@ -119,25 +119,37 @@ class StudentProfile(models.Model):
         related_name='student_profile'
     )
 
-    father_name = models.CharField(max_length=100)
-
-    contact_number = models.CharField(max_length=15)
-
     student_class = models.CharField(
         max_length=2,
-        choices=CLASS_CHOICES
+        choices=CLASS_CHOICES,
+        blank=True
     )
 
     section = models.CharField(
         max_length=1,
-        choices=SECTION_CHOICES
+        choices=SECTION_CHOICES,
+        blank=True
     )
 
-    roll_no = models.PositiveIntegerField()
+    roll_no = models.PositiveIntegerField(
+        null=True,
+        blank=True
+    )
 
-    class Meta:   # ❌ FIXED (pehle galat likha tha)
-        unique_together = ('student_class', 'section', 'roll_no')
-        ordering = ['student_class', 'section', 'roll_no']
+    dob = models.DateField(
+        null=True,
+        blank=True
+    )
+
+    father_name = models.CharField(
+        max_length=100,
+        blank=True
+    )
+
+    contact_number = models.CharField(
+        max_length=15,
+        blank=True
+    )
 
     def __str__(self):
         return f"{self.user.username} | Class {self.student_class}{self.section} | Roll {self.roll_no}"
@@ -159,11 +171,8 @@ class Homework(models.Model):
     )
 
     title = models.CharField(max_length=200)
-
     description = models.TextField()
-
     due_date = models.DateField()
-
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -182,12 +191,11 @@ class Notice(models.Model):
     """
     Notice Model
     ------------
-    - Admin / Teacher create karega
-    - Student / Teacher view karega
+    Admin / Teacher create
+    Student / Teacher view
     """
 
     title = models.CharField(max_length=200)
-
     message = models.TextField()
 
     created_by = models.ForeignKey(
@@ -199,7 +207,6 @@ class Notice(models.Model):
     )
 
     created_at = models.DateTimeField(default=timezone.now)
-
     is_active = models.BooleanField(default=True)
 
     class Meta:

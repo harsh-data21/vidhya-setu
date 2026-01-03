@@ -1,101 +1,79 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from accounts.models import User
+from django.conf import settings
 
 
-# --------------------
-# Subject Model
-# --------------------
+# ==================================================
+# SUBJECT MODEL
+# ==================================================
 class Subject(models.Model):
     """
     School subjects like:
     Maths, English, Science, etc.
     """
+
     name = models.CharField(
         max_length=100,
-        unique=True   # same subject dobara create na ho
+        unique=True
     )
 
     def __str__(self):
         return self.name
 
 
-# --------------------
-# Student Marks Model
-# --------------------
+# ==================================================
+# STUDENT MARK MODEL
+# ==================================================
 class StudentMark(models.Model):
     """
-    Student ke subject-wise marks store karne ke liye
-    Teacher decide karta hai:
-    - Exam kitne marks ka hai
-    - Student ne kitne marks obtain kiye
+    Stores marks of a student for a subject
     """
 
-    # --------------------
-    # Relations
-    # --------------------
     student = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        limit_choices_to={'role': 'STUDENT'},
-        related_name='marks'
+        limit_choices_to={'role': 'STUDENT'}
     )
 
     subject = models.ForeignKey(
         Subject,
-        on_delete=models.CASCADE,
-        related_name='student_marks'
+        on_delete=models.CASCADE
     )
 
-    # --------------------
-    # Marks Info
-    # --------------------
     marks_obtained = models.PositiveIntegerField(
-        help_text="Marks obtained by student"
-    )
-
-    max_marks = models.PositiveIntegerField(
-        help_text="Total marks of the exam (e.g. 70, 80, 100)"
-    )
-
-    # --------------------
-    # Meta Info
-    # --------------------
-    uploaded_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
         null=True,
-        blank=True,
-        limit_choices_to={'role': 'TEACHER'},
-        related_name='uploaded_marks'
+        blank=True
     )
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        # Ek student + subject ka ek hi marks record
-        unique_together = ('student', 'subject')
-        ordering = ['student__username', 'subject__name']
-
-    def __str__(self):
-        return f"{self.student.username} - {self.subject.name}"
+    total_marks = models.PositiveIntegerField(
+        null=True,
+        blank=True
+    )
 
     # --------------------
     # Helper Methods
     # --------------------
     def percentage(self):
         """
-        Student ka percentage calculate karta hai
+        Safely calculate percentage
+        (Admin GET request safe)
         """
-        if self.max_marks > 0:
-            return round((self.marks_obtained / self.max_marks) * 100, 2)
-        return 0
+
+        if self.marks_obtained is None or self.total_marks is None:
+            return 0
+
+        if self.total_marks == 0:
+            return 0
+
+        return round((self.marks_obtained / self.total_marks) * 100, 2)
+
+    percentage.short_description = "Percentage"
 
     def grade(self):
         """
         Percentage ke base par grade return karta hai
         """
+
         percent = self.percentage()
 
         if percent >= 90:
@@ -109,12 +87,23 @@ class StudentMark(models.Model):
         else:
             return "Fail"
 
+    # --------------------
+    # Validation
+    # --------------------
     def clean(self):
         """
         Validation:
         - Obtained marks total marks se zyada nahi ho sakte
         """
-        if self.marks_obtained > self.max_marks:
+
+        if (
+            self.marks_obtained is not None
+            and self.total_marks is not None
+            and self.marks_obtained > self.total_marks
+        ):
             raise ValidationError(
                 "Obtained marks cannot be greater than total marks"
             )
+
+    def __str__(self):
+        return f"{self.student.username} - {self.subject.name}"

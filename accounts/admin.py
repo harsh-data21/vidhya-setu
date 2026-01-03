@@ -89,9 +89,10 @@ class StudentProfileAdmin(admin.ModelAdmin):
     """
 
     list_display = (
+        'id',
         'user',
-        'father_name',
-        'contact_number',
+        'get_first_name',
+        'get_last_name',
         'student_class',
         'section',
         'roll_no',
@@ -102,20 +103,27 @@ class StudentProfileAdmin(admin.ModelAdmin):
         'section',
     )
 
-    search_fields = (
-        'user__username',
-        'user__first_name',
-        'user__last_name',
-        'father_name',
-        'contact_number',
-        'roll_no',
-    )
-
     ordering = (
         'student_class',
         'section',
         'roll_no',
     )
+
+    search_fields = (
+        'user__username',
+        'user__first_name',
+        'user__last_name',
+        'roll_no',
+    )
+
+    # -------- User fields helpers --------
+    def get_first_name(self, obj):
+        return obj.user.first_name
+    get_first_name.short_description = 'First Name'
+
+    def get_last_name(self, obj):
+        return obj.user.last_name
+    get_last_name.short_description = 'Last Name'
 
 
 # ==================================================
@@ -148,7 +156,7 @@ class HomeworkAdmin(admin.ModelAdmin):
 
 
 # ==================================================
-# NOTICE ADMIN  ✅ (MISSING PART – NOW ADDED)
+# NOTICE ADMIN
 # ==================================================
 @admin.register(Notice)
 class NoticeAdmin(admin.ModelAdmin):

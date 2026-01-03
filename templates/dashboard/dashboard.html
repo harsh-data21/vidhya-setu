@@ -22,7 +22,8 @@
 <h4>👑 Admin Actions</h4>
 <ul>
     <li>
-        <a href="/admin/accounts/user/" target="_blank">
+        <!-- ✅ Custom & Safe (NOT Django Admin) -->
+        <a href="{% url 'manage_users' %}">
             👥 Manage Users
         </a>
     </li>
@@ -60,18 +61,6 @@
     </li>
 
     <li>
-        <a href="{% url 'notice_list' %}">
-            📢 View Notices
-        </a>
-    </li>
-
-    <li>
-        <a href="{% url 'fees_report' %}">
-            💰 Fees Report
-        </a>
-    </li>
-
-    <li>
         <a href="{% url 'mark_attendance' %}">
             📋 Mark Attendance
         </a>
@@ -80,6 +69,18 @@
     <li>
         <a href="{% url 'upload_marks' %}">
             📝 Upload Marks
+        </a>
+    </li>
+
+    <li>
+        <a href="{% url 'notice_list' %}">
+            📢 View Notices
+        </a>
+    </li>
+
+    <li>
+        <a href="{% url 'fees_report' %}">
+            💰 Fees Report
         </a>
     </li>
 </ul>
@@ -116,8 +117,8 @@
     </li>
 
     <li>
-        📄 <a href="{% url 'my_marks' %}">
-            Check Marks
+        <a href="{% url 'my_marks' %}">
+            📄 Check Marks
         </a>
     </li>
 </ul>
