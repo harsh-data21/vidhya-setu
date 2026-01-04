@@ -42,8 +42,6 @@ def upload_marks(request):
         section=assigned_section
     ).select_related('user').order_by('roll_no')
 
-    students = [sp.user for sp in student_profiles]
-
     subjects = Subject.objects.all().order_by('name')
 
     # -----------------------------
@@ -52,18 +50,18 @@ def upload_marks(request):
     if request.method == 'POST':
 
         subject_id = request.POST.get('subject')
-        max_marks = request.POST.get('max_marks')
+        total_marks = request.POST.get('total_marks')   # ✅ FIXED NAME
 
-        if not subject_id or not max_marks:
+        if not subject_id or not total_marks:
             messages.error(request, "Subject and total marks are required ❌")
             return redirect('upload_marks')
 
-        if not max_marks.isdigit() or int(max_marks) <= 0:
+        if not total_marks.isdigit() or int(total_marks) <= 0:
             messages.error(request, "Total marks must be a positive number ❌")
             return redirect('upload_marks')
 
         subject = get_object_or_404(Subject, id=subject_id)
-        max_marks = int(max_marks)
+        total_marks = int(total_marks)
 
         saved_count = 0
 
@@ -79,7 +77,7 @@ def upload_marks(request):
 
             marks = int(marks)
 
-            if marks < 0 or marks > max_marks:
+            if marks < 0 or marks > total_marks:
                 continue
 
             StudentMark.objects.update_or_create(
@@ -87,7 +85,7 @@ def upload_marks(request):
                 subject=subject,
                 defaults={
                     'marks_obtained': marks,
-                    'max_marks': max_marks,
+                    'total_marks': total_marks,   # ✅ FIXED
                     'uploaded_by': request.user
                 }
             )
@@ -117,7 +115,7 @@ def upload_marks(request):
         request,
         'marks/upload_marks.html',
         {
-            'students': students,
+            'students': student_profiles,  # template me roll_no chahiye hota hai
             'subjects': subjects,
             'class_name': assigned_class,
             'section': assigned_section,

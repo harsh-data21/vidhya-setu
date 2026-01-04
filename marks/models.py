@@ -32,12 +32,14 @@ class StudentMark(models.Model):
     student = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        limit_choices_to={'role': 'STUDENT'}
+        limit_choices_to={'role': 'STUDENT'},
+        related_name="student_marks"
     )
 
     subject = models.ForeignKey(
         Subject,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="marks"
     )
 
     marks_obtained = models.PositiveIntegerField(
@@ -50,19 +52,28 @@ class StudentMark(models.Model):
         blank=True
     )
 
-    # --------------------
+    # ✅ IMPORTANT: teacher who uploaded marks
+    uploaded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        limit_choices_to={'role': 'TEACHER'},
+        related_name="uploaded_marks"
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    # ==================================================
     # Helper Methods
-    # --------------------
+    # ==================================================
     def percentage(self):
         """
         Safely calculate percentage
         (Admin GET request safe)
         """
-
-        if self.marks_obtained is None or self.total_marks is None:
-            return 0
-
-        if self.total_marks == 0:
+        if self.marks_obtained is None or self.total_marks in (None, 0):
             return 0
 
         return round((self.marks_obtained / self.total_marks) * 100, 2)
@@ -73,7 +84,6 @@ class StudentMark(models.Model):
         """
         Percentage ke base par grade return karta hai
         """
-
         percent = self.percentage()
 
         if percent >= 90:
@@ -87,9 +97,9 @@ class StudentMark(models.Model):
         else:
             return "Fail"
 
-    # --------------------
+    # ==================================================
     # Validation
-    # --------------------
+    # ==================================================
     def clean(self):
         """
         Validation:
@@ -104,6 +114,25 @@ class StudentMark(models.Model):
             raise ValidationError(
                 "Obtained marks cannot be greater than total marks"
             )
+
+    def save(self, *args, **kwargs):
+        """
+        Ensure validation always runs
+        """
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+    # ==================================================
+    # Meta Configuration
+    # ==================================================
+    class Meta:
+        verbose_name = "Student Mark"
+        verbose_name_plural = "Student Marks"
+
+        # ❌ same student + same subject ke duplicate marks prevent
+        unique_together = ('student', 'subject')
+
+        ordering = ['student__username', 'subject__name']
 
     def __str__(self):
         return f"{self.student.username} - {self.subject.name}"
