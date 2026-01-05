@@ -37,6 +37,7 @@ class User(AbstractUser):
 class TeacherProfile(models.Model):
     """
     Teacher Profile
+    Admin assigns class & section here
     """
 
     DESIGNATION_CHOICES = (
@@ -70,16 +71,25 @@ class TeacherProfile(models.Model):
         default='ASSISTANT'
     )
 
-    subject = models.CharField(max_length=100)
+    # 🔥 Subject specialization (text is fine)
+    subject = models.CharField(
+        max_length=100,
+        help_text="Main subject handled by teacher"
+    )
 
+    # 🔥 Admin assigns these
     assigned_class = models.CharField(
         max_length=2,
-        choices=CLASS_CHOICES
+        choices=CLASS_CHOICES,
+        null=True,
+        blank=True
     )
 
     assigned_section = models.CharField(
         max_length=1,
-        choices=SECTION_CHOICES
+        choices=SECTION_CHOICES,
+        null=True,
+        blank=True
     )
 
     phone = models.CharField(
@@ -122,12 +132,14 @@ class StudentProfile(models.Model):
     student_class = models.CharField(
         max_length=2,
         choices=CLASS_CHOICES,
+        null=True,
         blank=True
     )
 
     section = models.CharField(
         max_length=1,
         choices=SECTION_CHOICES,
+        null=True,
         blank=True
     )
 
@@ -150,6 +162,10 @@ class StudentProfile(models.Model):
         max_length=15,
         blank=True
     )
+
+    class Meta:
+        ordering = ['student_class', 'section', 'roll_no']
+        unique_together = ('student_class', 'section', 'roll_no')
 
     def __str__(self):
         return f"{self.user.username} | Class {self.student_class}{self.section} | Roll {self.roll_no}"
@@ -191,6 +207,7 @@ class Notice(models.Model):
     """
     Notice Model
     ------------
+
     Admin / Teacher create
     Student / Teacher view
     """

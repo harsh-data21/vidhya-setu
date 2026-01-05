@@ -13,12 +13,22 @@ class Subject(models.Model):
     """
 
     name = models.CharField(
-        max_length=100,
-        unique=True
+        max_length=100
     )
 
+    # 🔥 IMPORTANT (future use):
+    # Subject kis class ka hai
+    class_name = models.CharField(
+        max_length=2,
+        help_text="Class for which subject belongs (e.g. 6, 7, 8)"
+    )
+
+    class Meta:
+        unique_together = ('name', 'class_name')
+        ordering = ['class_name', 'name']
+
     def __str__(self):
-        return self.name
+        return f"{self.name} (Class {self.class_name})"
 
 
 # ==================================================
@@ -42,6 +52,12 @@ class StudentMark(models.Model):
         related_name="marks"
     )
 
+    exam_name = models.CharField(
+        max_length=50,
+        default="Unit Test",
+        help_text="Eg: Unit Test, Mid Term, Final"
+    )
+
     marks_obtained = models.PositiveIntegerField(
         null=True,
         blank=True
@@ -52,7 +68,7 @@ class StudentMark(models.Model):
         blank=True
     )
 
-    # ✅ IMPORTANT: teacher who uploaded marks
+    # ✅ teacher who uploaded marks
     uploaded_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -71,7 +87,6 @@ class StudentMark(models.Model):
     def percentage(self):
         """
         Safely calculate percentage
-        (Admin GET request safe)
         """
         if self.marks_obtained is None or self.total_marks in (None, 0):
             return 0
@@ -82,7 +97,7 @@ class StudentMark(models.Model):
 
     def grade(self):
         """
-        Percentage ke base par grade return karta hai
+        Grade based on percentage
         """
         percent = self.percentage()
 
@@ -103,7 +118,7 @@ class StudentMark(models.Model):
     def clean(self):
         """
         Validation:
-        - Obtained marks total marks se zyada nahi ho sakte
+        - Obtained marks total se zyada nahi hone chahiye
         """
 
         if (
@@ -129,10 +144,11 @@ class StudentMark(models.Model):
         verbose_name = "Student Mark"
         verbose_name_plural = "Student Marks"
 
-        # ❌ same student + same subject ke duplicate marks prevent
-        unique_together = ('student', 'subject')
+        # 🔥 VERY IMPORTANT
+        # Same student + same subject + same exam duplicate na ho
+        unique_together = ('student', 'subject', 'exam_name')
 
         ordering = ['student__username', 'subject__name']
 
     def __str__(self):
-        return f"{self.student.username} - {self.subject.name}"
+        return f"{self.student.username} - {self.subject.name} ({self.exam_name})"

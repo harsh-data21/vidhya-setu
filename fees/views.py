@@ -18,17 +18,24 @@ from .models import StudentFee
 # =================================================
 @login_required
 def student_fees_view(request):
-    fees = StudentFee.objects.filter(student=request.user)
+    """
+    Student can view own fees summary
+    """
 
-    total_amount = sum(
-        (fee.fee_structure.amount for fee in fees),
-        Decimal('0.00')
-    )
+    if request.user.role != 'STUDENT':
+        return HttpResponseForbidden("Access Denied")
 
-    paid_amount = sum(
-        (fee.fee_structure.amount for fee in fees if fee.status == 'PAID'),
-        Decimal('0.00')
-    )
+    fees = StudentFee.objects.select_related(
+        'fee_structure'
+    ).filter(student=request.user)
+
+    total_amount = fees.aggregate(
+        total=Sum('fee_structure__amount')
+    )['total'] or Decimal('0.00')
+
+    paid_amount = fees.filter(status='PAID').aggregate(
+        total=Sum('fee_structure__amount')
+    )['total'] or Decimal('0.00')
 
     pending_amount = total_amount - paid_amount
 
@@ -47,6 +54,13 @@ def student_fees_view(request):
 # =================================================
 @login_required
 def pay_fee_view(request, fee_id):
+    """
+    Demo payment: marks fee as PAID
+    """
+
+    if request.user.role != 'STUDENT':
+        return HttpResponseForbidden("Access Denied")
+
     fee = get_object_or_404(
         StudentFee,
         id=fee_id,
@@ -68,6 +82,13 @@ def pay_fee_view(request, fee_id):
 # =================================================
 @login_required
 def fee_receipt_view(request, fee_id):
+    """
+    Generates PDF fee receipt for student
+    """
+
+    if request.user.role != 'STUDENT':
+        return HttpResponseForbidden("Access Denied")
+
     fee = get_object_or_404(
         StudentFee,
         id=fee_id,
@@ -85,11 +106,13 @@ def fee_receipt_view(request, fee_id):
 
     p.setFont("Helvetica-Bold", 16)
     p.drawCentredString(width / 2, height - 50, "VIDHYA SETU SCHOOL")
+
     p.setFont("Helvetica", 12)
     p.drawCentredString(width / 2, height - 80, "Fee Payment Receipt")
 
     y = height - 140
     p.setFont("Helvetica", 11)
+
     p.drawString(80, y, f"Student Username: {fee.student.username}")
     y -= 25
     p.drawString(80, y, f"Class: {fee.fee_structure.class_name}")
@@ -117,12 +140,16 @@ def fee_receipt_view(request, fee_id):
 # =================================================
 @login_required
 def fees_report_view(request):
+    """
+    Admin / Teacher fee analytics & report
+    """
+
     if request.user.role not in ['ADMIN', 'TEACHER']:
-        return HttpResponseForbidden("You are not allowed to view this page.")
+        return HttpResponseForbidden("Access Denied")
 
     fees = StudentFee.objects.select_related(
         'student',
-        'student__student_profile',   # ✅ FIXED
+        'student__student_profile',
         'fee_structure'
     )
 
@@ -194,12 +221,16 @@ def fees_report_view(request):
 # =================================================
 @login_required
 def export_fees_excel(request):
+    """
+    Export fee report to Excel (Admin / Teacher)
+    """
+
     if request.user.role not in ['ADMIN', 'TEACHER']:
-        return HttpResponseForbidden("You are not allowed to export data.")
+        return HttpResponseForbidden("Access Denied")
 
     fees = StudentFee.objects.select_related(
         'student',
-        'student__student_profile',   # ✅ FIXED
+        'student__student_profile',
         'fee_structure'
     )
 
@@ -218,12 +249,12 @@ def export_fees_excel(request):
     ])
 
     for fee in fees:
-        profile = getattr(fee.student, 'student_profile', None)  # ✅ FIXED
+        profile = getattr(fee.student, 'student_profile', None)
 
         ws.append([
             fee.student.username,
             profile.father_name if profile else "",
-            profile.phone if profile else "",
+            profile.contact_number if profile else "",
             fee.fee_structure.class_name,
             fee.fee_structure.month,
             float(fee.fee_structure.amount),
@@ -234,6 +265,6 @@ def export_fees_excel(request):
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
     response['Content-Disposition'] = 'attachment; filename=fees_report.xlsx'
-    wb.save(response)
 
+    wb.save(response)
     return response

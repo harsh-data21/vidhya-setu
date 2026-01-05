@@ -2,6 +2,21 @@
 {% block content %}
 
 <h2>📊 My Marks</h2>
+
+<!-- ================= EXAM FILTER ================= -->
+<form method="get" style="margin-bottom:15px;">
+    <label><strong>Select Exam:</strong></label>
+    <select name="exam" onchange="this.form.submit()">
+        <option value="">All Exams</option>
+        {% for exam in exams %}
+            <option value="{{ exam }}"
+                {% if exam == selected_exam %}selected{% endif %}>
+                {{ exam }}
+            </option>
+        {% endfor %}
+    </select>
+</form>
+
 <hr>
 
 {% if marks %}
@@ -18,13 +33,17 @@
     <tr>
         <td>{{ m.subject.name }}</td>
         <td>{{ m.marks_obtained }}</td>
-        <td>{{ m.max_marks }}</td>
+        <td>{{ m.total_marks }}</td>
         <td>{{ m.percentage }}%</td>
         <td>
             {% if m.grade == "Fail" %}
-                <span style="color:red; font-weight:bold;">{{ m.grade }}</span>
+                <span style="color:red; font-weight:bold;">
+                    {{ m.grade }}
+                </span>
             {% else %}
-                <span style="color:green; font-weight:bold;">{{ m.grade }}</span>
+                <span style="color:green; font-weight:bold;">
+                    {{ m.grade }}
+                </span>
             {% endif %}
         </td>
     </tr>
@@ -32,7 +51,9 @@
 </table>
 
 {% else %}
-    <p style="color:gray;">No marks uploaded yet.</p>
+    <p style="color:gray;">
+        📭 No marks uploaded yet.
+    </p>
 {% endif %}
 
 {% endblock %}

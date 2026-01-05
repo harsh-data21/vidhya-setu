@@ -3,15 +3,49 @@
 
 <h2>📝 Upload Marks</h2>
 
-<!-- ================= CLASS & SECTION INFO ================= -->
-<p style="font-weight:bold;">
-    Class {{ class_name }} | Section {{ section }}
-</p>
+<!-- ================= CLASS & SECTION SELECT (GET) ================= -->
+<form method="get" style="margin-bottom:15px;">
+    <label><strong>Class:</strong></label>
+    <select name="class" required>
+        <option value="">Select</option>
+        {% for c in "12345678910"|make_list %}
+            <option value="{{ c }}"
+                {% if c == selected_class %}selected{% endif %}>
+                {{ c }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <label><strong>Section:</strong></label>
+    <select name="section" required>
+        <option value="">Select</option>
+        {% for sec in "ABC"|make_list %}
+            <option value="{{ sec }}"
+                {% if sec == selected_section %}selected{% endif %}>
+                {{ sec }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Load Students</button>
+</form>
 
 <hr>
 
+{% if students %}
+
+<!-- ================= CLASS & SECTION INFO ================= -->
+<p style="font-weight:bold;">
+    Class {{ selected_class }} | Section {{ selected_section }}
+</p>
+
+<!-- ================= MARKS FORM (POST) ================= -->
 <form method="post" novalidate>
     {% csrf_token %}
+
+    <!-- 🔥 IMPORTANT: class & section POST me bhejna -->
+    <input type="hidden" name="class" value="{{ selected_class }}">
+    <input type="hidden" name="section" value="{{ selected_section }}">
 
     <!-- ================= SUBJECT SELECT ================= -->
     <label><strong>Select Subject:</strong></label><br>
@@ -26,11 +60,23 @@
 
     <br><br>
 
+    <!-- ================= EXAM NAME ================= -->
+    <label><strong>Exam Name:</strong></label><br>
+    <input
+        type="text"
+        name="exam_name"
+        placeholder="Unit Test / Mid Term / Final"
+        value="Unit Test"
+        required
+    >
+
+    <br><br>
+
     <!-- ================= TOTAL MARKS ================= -->
     <label><strong>Total Marks of Exam:</strong></label><br>
     <input
         type="number"
-        name="max_marks"
+        name="total_marks"
         placeholder="e.g. 70 / 80 / 100"
         min="1"
         required
@@ -48,19 +94,16 @@
 
         {% for student in students %}
         <tr>
-            <!-- Roll number via student_profile -->
             <td style="text-align:center;">
-                {{ student.student_profile.roll_no }}
+                {{ student.roll_no }}
             </td>
-
             <td>
-                {{ student.username }}
+                {{ student.user.username }}
             </td>
-
             <td>
                 <input
                     type="number"
-                    name="marks_{{ student.id }}"
+                    name="marks_{{ student.user.id }}"
                     min="0"
                     placeholder="Enter marks"
                 >
@@ -74,5 +117,11 @@
     <!-- ================= SUBMIT ================= -->
     <button type="submit">Save Marks</button>
 </form>
+
+{% else %}
+    <p style="color:gray;">
+        👆 Please select Class & Section to load students.
+    </p>
+{% endif %}
 
 {% endblock %}

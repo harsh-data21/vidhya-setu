@@ -9,7 +9,7 @@ from .models import (
 
 
 # ==================================================
-# USER ADMIN
+# 👤 USER ADMIN
 # ==================================================
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -23,6 +23,7 @@ class UserAdmin(admin.ModelAdmin):
         'role',
         'is_staff',
         'is_active',
+        'date_joined',
     )
 
     list_filter = (
@@ -40,14 +41,17 @@ class UserAdmin(admin.ModelAdmin):
 
     ordering = ('username',)
 
+    list_per_page = 25
+
 
 # ==================================================
-# TEACHER PROFILE ADMIN
+# 👨‍🏫 TEACHER PROFILE ADMIN
 # ==================================================
 @admin.register(TeacherProfile)
 class TeacherProfileAdmin(admin.ModelAdmin):
     """
     Admin configuration for TeacherProfile
+    (Teacher assign to class & section here)
     """
 
     list_display = (
@@ -78,9 +82,11 @@ class TeacherProfileAdmin(admin.ModelAdmin):
         'user__username',
     )
 
+    list_per_page = 25
+
 
 # ==================================================
-# STUDENT PROFILE ADMIN
+# 🎓 STUDENT PROFILE ADMIN
 # ==================================================
 @admin.register(StudentProfile)
 class StudentProfileAdmin(admin.ModelAdmin):
@@ -116,6 +122,8 @@ class StudentProfileAdmin(admin.ModelAdmin):
         'roll_no',
     )
 
+    list_per_page = 25
+
     # -------- User fields helpers --------
     def get_first_name(self, obj):
         return obj.user.first_name
@@ -127,7 +135,7 @@ class StudentProfileAdmin(admin.ModelAdmin):
 
 
 # ==================================================
-# HOMEWORK ADMIN
+# 📚 HOMEWORK ADMIN
 # ==================================================
 @admin.register(Homework)
 class HomeworkAdmin(admin.ModelAdmin):
@@ -154,9 +162,11 @@ class HomeworkAdmin(admin.ModelAdmin):
 
     ordering = ('due_date',)
 
+    list_per_page = 25
+
 
 # ==================================================
-# NOTICE ADMIN
+# 📢 NOTICE ADMIN
 # ==================================================
 @admin.register(Notice)
 class NoticeAdmin(admin.ModelAdmin):
@@ -184,9 +194,11 @@ class NoticeAdmin(admin.ModelAdmin):
 
     ordering = ('-created_at',)
 
+    list_per_page = 25
+
 
 # ==================================================
-# ADMIN PANEL BRANDING
+# 🏫 ADMIN PANEL BRANDING
 # ==================================================
 admin.site.site_header = "Vidhya Setu Administration"
 admin.site.site_title = "Vidhya Setu Admin Portal"

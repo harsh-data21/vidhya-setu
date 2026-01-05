@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% block content %}
 
 <h2 style="text-align:center; margin-top:20px;">
@@ -33,7 +32,7 @@
         {% for cls in classes %}
             <option value="{{ cls }}"
                 {% if cls == selected_class %}selected{% endif %}>
-                {{ cls }}
+                Class {{ cls }}
             </option>
         {% endfor %}
     </select>
@@ -84,7 +83,7 @@
 
 <!-- ================= FEES TABLE ================= -->
 <table border="1" cellpadding="10" cellspacing="0" width="100%">
-    <tr>
+    <tr style="background:#f2f2f2;">
         <th>Student</th>
         <th>Father Name</th>
         <th>Contact No.</th>
@@ -99,10 +98,10 @@
         <td>{{ fee.student.username }}</td>
 
         <!-- Safe student profile access -->
-        <td>{{ fee.student.studentprofile.father_name|default:"—" }}</td>
-        <td>{{ fee.student.studentprofile.phone|default:"—" }}</td>
+        <td>{{ fee.student.student_profile.father_name|default:"—" }}</td>
+        <td>{{ fee.student.student_profile.contact_number|default:"—" }}</td>
 
-        <td>{{ fee.fee_structure.class_name }}</td>
+        <td>Class {{ fee.fee_structure.class_name }}</td>
         <td>{{ fee.fee_structure.month }}</td>
         <td>₹{{ fee.fee_structure.amount }}</td>
 
