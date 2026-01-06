@@ -44,13 +44,11 @@ class FeeStructure(models.Model):
         help_text="Monthly fee amount"
     )
 
-    # 🔥 SQLite-safe (NO auto_now_add)
-    created_at = models.DateTimeField(
-        default=timezone.now
-    )
+    # ✅ SQLite-safe timestamp
+    created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
-        unique_together = ('class_name', 'month')
+        unique_together = ('class_name', 'month')  # same class+month once only
         ordering = ('class_name', 'month')
         verbose_name = "Fee Structure"
         verbose_name_plural = "Fee Structures"
@@ -76,7 +74,7 @@ class StudentFee(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         limit_choices_to={'role': 'STUDENT'},
-        related_name='fees'
+        related_name='student_fees'
     )
 
     fee_structure = models.ForeignKey(
@@ -98,14 +96,12 @@ class StudentFee(models.Model):
 
     transaction_id = models.CharField(
         max_length=100,
-        blank=True,
-        null=True
+        null=True,
+        blank=True
     )
 
-    # 🔥 SQLite-safe (NO auto_now_add)
-    created_at = models.DateTimeField(
-        default=timezone.now
-    )
+    # ✅ SQLite-safe timestamp
+    created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         ordering = ('-created_at',)
