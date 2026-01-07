@@ -1,104 +1,151 @@
 {% extends 'base.html' %}
 
+{% block title %}Login | Vidhya Setu ERP{% endblock %}
+
 {% block content %}
 
-<!-- ================================================= -->
-<!-- 🔐 LOGIN PAGE -->
-<!-- ================================================= -->
-<h2 style="text-align:center;">🔐 Login</h2>
-<hr>
+<div style="
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:75vh;
+">
 
-<!-- ================================================= -->
-<!-- ❌ ERROR / SUCCESS MESSAGES -->
-<!-- ================================================= -->
-{% if messages %}
-    {% for message in messages %}
-        <p style="color:red; text-align:center;">
-            {{ message }}
-        </p>
-    {% endfor %}
-{% endif %}
+    <div style="
+        background:#ffffff;
+        width:420px;
+        padding:40px;
+        border-radius:10px;
+        box-shadow:0 12px 30px rgba(0,0,0,0.12);
+    ">
 
-<!-- ================================================= -->
-<!-- 📝 LOGIN FORM -->
-<!-- ================================================= -->
-<form method="post"
-      action="{% url 'login' %}"
-      style="width:350px; margin:30px auto;">
+        <!-- ERP HEADER -->
+        <div style="text-align:center; margin-bottom:25px;">
+            <h2 style="margin:0; color:#1f2937; font-weight:600;">
+                Vidhya Setu ERP
+            </h2>
+            <p style="margin-top:6px; font-size:13px; color:#6b7280;">
+                School Management System
+            </p>
+        </div>
 
-    {% csrf_token %}
+        <!-- ERROR / INFO MESSAGES -->
+        {% if messages %}
+            {% for message in messages %}
+                <div style="
+                    background:#fdecea;
+                    color:#b91c1c;
+                    padding:10px;
+                    border-radius:6px;
+                    font-size:13px;
+                    margin-bottom:15px;
+                    text-align:center;
+                ">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
 
-    <!-- USERNAME -->
-    <div>
-        <label><strong>Username</strong></label><br>
-        <input
-            type="text"
-            name="username"
-            placeholder="Enter your username"
-            required
-            style="width:100%; padding:8px;"
-        >
-    </div>
+        <!-- LOGIN FORM -->
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
 
-    <br>
+            <!-- USERNAME -->
+            <div style="margin-bottom:18px;">
+                <label style="
+                    font-size:13px;
+                    font-weight:500;
+                    color:#374151;
+                ">
+                    Username
+                </label>
+                <input type="text"
+                       name="username"
+                       placeholder="Enter username"
+                       required
+                       style="
+                            width:100%;
+                            padding:11px;
+                            margin-top:6px;
+                            border-radius:6px;
+                            border:1px solid #d1d5db;
+                            font-size:14px;
+                       ">
+            </div>
 
-    <!-- PASSWORD -->
-    <div>
-        <label><strong>Password</strong></label><br>
-        <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Enter your password"
-            required
-            style="width:100%; padding:8px;"
-        >
-    </div>
+            <!-- PASSWORD -->
+            <div style="margin-bottom:8px;">
+                <label style="
+                    font-size:13px;
+                    font-weight:500;
+                    color:#374151;
+                ">
+                    Password
+                </label>
+                <input type="password"
+                       id="password"
+                       name="password"
+                       placeholder="Enter password"
+                       required
+                       style="
+                            width:100%;
+                            padding:11px;
+                            margin-top:6px;
+                            border-radius:6px;
+                            border:1px solid #d1d5db;
+                            font-size:14px;
+                       ">
+            </div>
 
-    <!-- 👁 SHOW / HIDE PASSWORD -->
-    <div style="margin-top:6px;">
-        <input
-            type="checkbox"
-            id="showPassword"
-            onclick="togglePassword()"
-        >
-        <label for="showPassword">Show Password</label>
-    </div>
-
-    <br>
-
-    <!-- SUBMIT -->
-    <button type="submit"
-            style="
-                width:100%;
-                padding:10px;
-                background:#2c7be5;
-                color:white;
-                border:none;
-                cursor:pointer;
+            <!-- SHOW / HIDE PASSWORD -->
+            <div style="
+                font-size:12px;
+                color:#4b5563;
+                margin-bottom:20px;
             ">
-        🔓 Login
-    </button>
-</form>
+                <input type="checkbox" id="showPassword" onclick="togglePassword()">
+                <label for="showPassword">Show password</label>
+            </div>
 
-<!-- ================================================= -->
-<!-- 🎓 STUDENT REGISTRATION LINK (FIXED & WORKING) -->
-<!-- ================================================= -->
-<p style="text-align:center; margin-top:15px;">
-    New Student?
-    <a href="{% url 'student_register' %}" style="font-weight:bold;">
-        Register here
-    </a>
-</p>
+            <!-- LOGIN BUTTON -->
+            <button type="submit"
+                    style="
+                        width:100%;
+                        padding:12px;
+                        background:#1f2937;
+                        color:white;
+                        border:none;
+                        border-radius:6px;
+                        font-size:14px;
+                        font-weight:500;
+                        cursor:pointer;
+                        transition:0.3s;
+                    "
+                    onmouseover="this.style.background='#111827'"
+                    onmouseout="this.style.background='#1f2937'">
+                Sign In
+            </button>
+        </form>
 
-<!-- ================================================= -->
-<!-- 📜 JAVASCRIPT -->
-<!-- ================================================= -->
+        <hr style="margin:25px 0;">
+
+        <!-- FOOT NOTE -->
+        <p style="
+            text-align:center;
+            font-size:12px;
+            color:#6b7280;
+        ">
+            Authorized users only — Admin • Teacher • Student
+        </p>
+
+    </div>
+</div>
+
+<!-- JS -->
 <script>
 function togglePassword() {
-    const passwordField = document.getElementById("password");
-    passwordField.type =
-        passwordField.type === "password" ? "text" : "password";
+    const field = document.getElementById("password");
+    field.type = field.type === "password" ? "text" : "password";
 }
 </script>
 

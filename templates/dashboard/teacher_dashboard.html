@@ -1,0 +1,58 @@
+{% extends 'layouts/dashboard_base.html' %}
+
+{% block title %}Teacher Dashboard | Vidhya Setu ERP{% endblock %}
+
+{% block dashboard_content %}
+
+<!-- ================= PAGE HEADER ================= -->
+<div style="margin-bottom:25px;">
+    <h2 style="margin:0; color:#1f2937; font-weight:600;">
+        Teacher Dashboard
+    </h2>
+    <p style="margin-top:6px; font-size:14px; color:#6b7280;">
+        Teaching & academic activities
+    </p>
+</div>
+
+<!-- ================= DASHBOARD GRID ================= -->
+<div class="dashboard-grid">
+
+    <!-- ATTENDANCE -->
+    <div class="dashboard-card">
+        <h4>Attendance</h4>
+        <p>Mark and review daily student attendance</p>
+        <a href="#">
+            Mark Attendance
+        </a>
+    </div>
+
+    <!-- HOMEWORK -->
+    <div class="dashboard-card">
+        <h4>Homework</h4>
+        <p>Create and manage homework assignments</p>
+        <a href="{% url 'add_homework' %}">
+            Add Homework
+        </a>
+    </div>
+
+    <!-- MARKS -->
+    <div class="dashboard-card">
+        <h4>Marks</h4>
+        <p>Upload and manage examination marks</p>
+        <a href="#">
+            Upload Marks
+        </a>
+    </div>
+
+    <!-- STUDENTS -->
+    <div class="dashboard-card">
+        <h4>Students</h4>
+        <p>View students of assigned classes</p>
+        <a href="{% url 'student_list' %}">
+            View Students
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'layouts/dashboard_base.html' %}
+
+{% block title %}Student Dashboard | Vidhya Setu ERP{% endblock %}
+
+{% block dashboard_content %}
+
+<!-- ================= PAGE HEADER ================= -->
+<div style="margin-bottom:25px;">
+    <h2 style="margin:0; color:#1f2937; font-weight:600;">
+        Student Dashboard
+    </h2>
+    <p style="margin-top:6px; font-size:14px; color:#6b7280;">
+        Your academic overview
+    </p>
+</div>
+
+<!-- ================= DASHBOARD GRID ================= -->
+<div class="dashboard-grid">
+
+    <!-- ATTENDANCE -->
+    <div class="dashboard-card">
+        <h4>Attendance</h4>
+        <p>View your attendance record</p>
+        <a href="#">
+            My Attendance
+        </a>
+    </div>
+
+    <!-- MARKS -->
+    <div class="dashboard-card">
+        <h4>Marks</h4>
+        <p>Check examination and test results</p>
+        <a href="#">
+            My Marks
+        </a>
+    </div>
+
+    <!-- HOMEWORK -->
+    <div class="dashboard-card">
+        <h4>Homework</h4>
+        <p>View homework assigned by teachers</p>
+        <a href="{% url 'view_homework' %}">
+            View Homework
+        </a>
+    </div>
+
+    <!-- FEES -->
+    <div class="dashboard-card">
+        <h4>Fees</h4>
+        <p>View fee status and payment details</p>
+        <a href="#">
+            My Fees
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

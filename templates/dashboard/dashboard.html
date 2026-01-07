@@ -1,127 +1,121 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<!-- ================================================= -->
-<!-- 📊 DASHBOARD HEADING -->
-<!-- ================================================= -->
+<!-- ================= DASHBOARD HEADING ================= -->
 <h2 style="text-align:center; margin-top:20px;">
     {{ request.user.role }} Dashboard
 </h2>
 
-<p style="text-align:center;">
+<p style="text-align:center; color:#555;">
     Welcome, <strong>{{ request.user.username }}</strong>
 </p>
 
 <hr>
 
-<!-- ================================================= -->
-<!-- 👑 ADMIN DASHBOARD -->
-<!-- ================================================= -->
+<!-- ================= ADMIN DASHBOARD ================= -->
 {% if request.user.role == 'ADMIN' %}
 
-<h4>👑 Admin Actions</h4>
-<ul>
-    <li>
-        <!-- ✅ Custom & Safe (NOT Django Admin) -->
-        <a href="{% url 'manage_users' %}">
-            👥 Manage Users
-        </a>
-    </li>
+<div class="dashboard-grid">
 
-    <li>
-        <a href="{% url 'notice_list' %}">
-            📢 View Notices
-        </a>
-    </li>
+    <div class="dashboard-card">
+        <h4>👥 Manage Users</h4>
+        <p>Create, edit & deactivate users</p>
+        <a href="{% url 'manage_users' %}">Open</a>
+    </div>
 
-    <li>
-        <a href="{% url 'fees_report' %}">
-            💰 Fees Report
-        </a>
-    </li>
+    <div class="dashboard-card">
+        <h4>📢 Notices</h4>
+        <p>View all active notices</p>
+        <a href="{% url 'notice_list' %}">View</a>
+    </div>
 
-    <li>
-        <a href="{% url 'monthly_attendance_report' %}">
-            📊 Monthly Attendance Report
-        </a>
-    </li>
-</ul>
+    <div class="dashboard-card">
+        <h4>💰 Fees Report</h4>
+        <p>Student-wise fees overview</p>
+        <a href="{% url 'fees_report' %}">View</a>
+    </div>
 
-<!-- ================================================= -->
-<!-- 👨‍🏫 TEACHER DASHBOARD -->
-<!-- ================================================= -->
+    <div class="dashboard-card">
+        <h4>📊 Attendance</h4>
+        <p>Monthly attendance report</p>
+        <a href="{% url 'monthly_attendance_report' %}">View</a>
+    </div>
+
+</div>
+
+<!-- ================= TEACHER DASHBOARD ================= -->
 {% elif request.user.role == 'TEACHER' %}
 
-<h4>👨‍🏫 Teacher Actions</h4>
-<ul>
-    <li>
-        <a href="{% url 'add_homework' %}">
-            📘 Add Homework
-        </a>
-    </li>
+<div class="dashboard-grid">
 
-    <li>
-        <a href="{% url 'mark_attendance' %}">
-            📋 Mark Attendance
-        </a>
-    </li>
+    <div class="dashboard-card">
+        <h4>📘 Add Homework</h4>
+        <p>Create homework for students</p>
+        <a href="{% url 'add_homework' %}">Add</a>
+    </div>
 
-    <li>
-        <a href="{% url 'upload_marks' %}">
-            📝 Upload Marks
-        </a>
-    </li>
+    <div class="dashboard-card">
+        <h4>📋 Mark Attendance</h4>
+        <p>Mark daily attendance</p>
+        <a href="{% url 'mark_attendance' %}">Mark</a>
+    </div>
 
-    <li>
-        <a href="{% url 'notice_list' %}">
-            📢 View Notices
-        </a>
-    </li>
+    <div class="dashboard-card">
+        <h4>📝 Upload Marks</h4>
+        <p>Upload exam marks</p>
+        <a href="{% url 'upload_marks' %}">Upload</a>
+    </div>
 
-    <li>
-        <a href="{% url 'fees_report' %}">
-            💰 Fees Report
-        </a>
-    </li>
-</ul>
+    <div class="dashboard-card">
+        <h4>📢 Notices</h4>
+        <p>View school notices</p>
+        <a href="{% url 'notice_list' %}">View</a>
+    </div>
 
-<!-- ================================================= -->
-<!-- 👨‍🎓 STUDENT DASHBOARD -->
-<!-- ================================================= -->
+    <div class="dashboard-card">
+        <h4>💰 Fees</h4>
+        <p>Check student fees</p>
+        <a href="{% url 'fees_report' %}">View</a>
+    </div>
+
+</div>
+
+<!-- ================= STUDENT DASHBOARD ================= -->
 {% elif request.user.role == 'STUDENT' %}
 
-<h4>👨‍🎓 Student Actions</h4>
-<ul>
-    <li>
-        <a href="{% url 'view_homework' %}">
-            📚 View Homework
-        </a>
-    </li>
+<div class="dashboard-grid">
 
-    <li>
-        <a href="{% url 'notice_list' %}">
-            📢 Read Notices
-        </a>
-    </li>
+    <div class="dashboard-card">
+        <h4>📚 Homework</h4>
+        <p>View assigned homework</p>
+        <a href="{% url 'view_homework' %}">View</a>
+    </div>
 
-    <li>
-        <a href="{% url 'student_fees' %}">
-            💰 My Fees
-        </a>
-    </li>
+    <div class="dashboard-card">
+        <h4>📢 Notices</h4>
+        <p>Read school notices</p>
+        <a href="{% url 'notice_list' %}">Read</a>
+    </div>
 
-    <li>
-        <a href="{% url 'student_attendance' %}">
-            📊 View Attendance
-        </a>
-    </li>
+    <div class="dashboard-card">
+        <h4>💰 My Fees</h4>
+        <p>View your fee details</p>
+        <a href="{% url 'student_fees' %}">View</a>
+    </div>
 
-    <li>
-        <a href="{% url 'my_marks' %}">
-            📄 Check Marks
-        </a>
-    </li>
-</ul>
+    <div class="dashboard-card">
+        <h4>📊 Attendance</h4>
+        <p>View your attendance</p>
+        <a href="{% url 'student_attendance' %}">View</a>
+    </div>
+
+    <div class="dashboard-card">
+        <h4>📄 Marks</h4>
+        <p>Check your exam marks</p>
+        <a href="{% url 'my_marks' %}">Check</a>
+    </div>
+
+</div>
 
 {% else %}
 
@@ -133,13 +127,9 @@
 
 <hr>
 
-<!-- ================================================= -->
-<!-- 🚪 LOGOUT -->
-<!-- ================================================= -->
-<div style="text-align:center;">
-    <a href="{% url 'logout' %}">
-        🚪 Logout
-    </a>
+<!-- ================= LOGOUT ================= -->
+<div style="text-align:center; margin-top:20px;">
+    <a href="{% url 'logout' %}">🚪 Logout</a>
 </div>
 
 {% endblock %}

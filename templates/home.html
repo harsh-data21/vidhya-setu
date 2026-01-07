@@ -1,31 +1,87 @@
 {% extends 'base.html' %}
 
+{% block title %}Home | Vidhya Setu{% endblock %}
+
 {% block content %}
-<h2>Welcome to Vidhya Setu</h2>
 
-<p>
-    Vidhya Setu is a School Management System where
-    Admin, Teachers, and Students can manage daily activities.
-</p>
+<div style="display:flex; justify-content:center; align-items:center; min-height:70vh;">
 
-{% if user.is_authenticated %}
-    <p>
-        You are logged in as <strong>{{ user.username }}</strong>.
-    </p>
+    <div style="
+        background:#ffffff;
+        padding:40px;
+        max-width:600px;
+        width:100%;
+        border-radius:12px;
+        text-align:center;
+        box-shadow:0 8px 20px rgba(0,0,0,0.1);
+    ">
 
-    {% if user.role == 'ADMIN' %}
-        <a href="{% url 'admin_dashboard' %}">Go to Admin Dashboard</a>
+        <h2 style="color:#2c3e50; margin-bottom:15px;">
+            🎓 Welcome to Vidhya Setu
+        </h2>
 
-    {% elif user.role == 'TEACHER' %}
-        <a href="{% url 'teacher_dashboard' %}">Go to Teacher Dashboard</a>
+        <p style="color:#555; font-size:15px; line-height:1.6;">
+            Vidhya Setu is a complete <strong>School Management System</strong>
+            designed for <strong>Admin, Teachers, and Students</strong>
+            to manage daily academic activities efficiently.
+        </p>
 
-    {% else %}
-        <a href="{% url 'student_dashboard' %}">Go to Student Dashboard</a>
-    {% endif %}
+        <hr style="margin:25px 0;">
 
-{% else %}
-    <p>Please login to continue.</p>
-    <a href="{% url 'login' %}">Login</a>
-{% endif %}
+        {% if user.is_authenticated %}
+
+            <p style="font-size:15px; color:#333;">
+                Logged in as <strong>{{ user.username }}</strong>
+            </p>
+
+            {% if user.role == 'ADMIN' %}
+                <a href="{% url 'admin_dashboard' %}" class="btn-link">
+                    🚀 Go to Admin Dashboard
+                </a>
+
+            {% elif user.role == 'TEACHER' %}
+                <a href="{% url 'teacher_dashboard' %}" class="btn-link">
+                    📚 Go to Teacher Dashboard
+                </a>
+
+            {% else %}
+                <a href="{% url 'student_dashboard' %}" class="btn-link">
+                    🎒 Go to Student Dashboard
+                </a>
+            {% endif %}
+
+        {% else %}
+
+            <p style="color:#777;">
+                Please login to continue.
+            </p>
+
+            <a href="{% url 'login' %}" class="btn-link">
+                🔐 Login
+            </a>
+
+        {% endif %}
+
+    </div>
+</div>
+
+<style>
+    .btn-link {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 10px 22px;
+        background: #2c3e50;
+        color: white;
+        text-decoration: none;
+        border-radius: 25px;
+        font-size: 14px;
+        transition: 0.3s;
+    }
+
+    .btn-link:hover {
+        background: #1a252f;
+        transform: translateY(-2px);
+    }
+</style>
 
 {% endblock %}

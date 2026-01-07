@@ -5,6 +5,7 @@
 
 <!-- ================= SEARCH & FILTER ================= -->
 <form method="get" style="margin-bottom:15px;">
+
     <input
         type="text"
         name="q"
@@ -12,9 +13,10 @@
         value="{{ request.GET.q }}"
     >
 
+    <!-- CLASS FILTER -->
     <select name="class">
         <option value="">Class</option>
-        {% for cls in "123456789101112".split %}
+        {% for cls in classes %}
             <option value="{{ cls }}"
                 {% if request.GET.class == cls %}selected{% endif %}
             >
@@ -23,17 +25,19 @@
         {% endfor %}
     </select>
 
+    <!-- SECTION FILTER -->
     <select name="section">
         <option value="">Section</option>
-        {% for sec in "ABC" %}
+        {% for sec in sections %}
             <option value="{{ sec }}"
-                {% if request.GET.section == sec|stringformat:"s" %}selected{% endif %}
+                {% if request.GET.section == sec %}selected{% endif %}
             >
                 {{ sec }}
             </option>
         {% endfor %}
     </select>
 
+    <!-- FEES FILTER -->
     <select name="fees">
         <option value="">Fees</option>
         <option value="paid" {% if request.GET.fees == 'paid' %}selected{% endif %}>

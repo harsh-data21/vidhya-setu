@@ -6,11 +6,6 @@ from .views import (
     login_view,
     logout_view,
 
-    # Dashboards
-    admin_dashboard,
-    teacher_dashboard,
-    student_dashboard,
-
     # Student
     student_register,
     student_list,
@@ -38,17 +33,10 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
 
     # ==================================================
-    # 📊 DASHBOARDS
-    # ==================================================
-    path('admin-dashboard/', admin_dashboard, name='admin_dashboard'),
-    path('teacher-dashboard/', teacher_dashboard, name='teacher_dashboard'),
-    path('student-dashboard/', student_dashboard, name='student_dashboard'),
-
-    # ==================================================
     # 🎓 STUDENTS
     # ==================================================
     path('register/student/', student_register, name='student_register'),
-    path('students/', student_list, name='student_list'),  # 🔥 IMPORTANT
+    path('students/', student_list, name='student_list'),
 
     # ==================================================
     # 📚 HOMEWORK

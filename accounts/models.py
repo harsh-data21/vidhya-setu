@@ -8,12 +8,6 @@ from django.utils import timezone
 # CUSTOM USER MODEL
 # ==================================================
 class User(AbstractUser):
-    """
-    Custom User Model
-    -----------------
-    Role-based authentication system
-    """
-
     ROLE_CHOICES = (
         ('ADMIN', 'Admin'),
         ('TEACHER', 'Teacher'),
@@ -35,11 +29,6 @@ class User(AbstractUser):
 # TEACHER PROFILE
 # ==================================================
 class TeacherProfile(models.Model):
-    """
-    Teacher Profile
-    Admin assigns class & section here
-    """
-
     DESIGNATION_CHOICES = (
         ('PRINCIPAL', 'Principal'),
         ('SENIOR', 'Senior Teacher'),
@@ -71,13 +60,8 @@ class TeacherProfile(models.Model):
         default='ASSISTANT'
     )
 
-    # 🔥 Subject specialization (text is fine)
-    subject = models.CharField(
-        max_length=100,
-        help_text="Main subject handled by teacher"
-    )
+    subject = models.CharField(max_length=100)
 
-    # 🔥 Admin assigns these
     assigned_class = models.CharField(
         max_length=2,
         choices=CLASS_CHOICES,
@@ -94,21 +78,18 @@ class TeacherProfile(models.Model):
 
     phone = models.CharField(
         max_length=15,
-        blank=True,
-        null=True
+        null=True,
+        blank=True
     )
 
     def __str__(self):
-        return f"{self.user.username} | {self.subject} | {self.assigned_class}{self.assigned_section}"
+        return f"{self.user.username} | {self.subject}"
 
 
 # ==================================================
-# STUDENT PROFILE
+# STUDENT PROFILE  ✅ MIGRATION SAFE
 # ==================================================
 class StudentProfile(models.Model):
-    """
-    Student Profile
-    """
 
     CLASS_CHOICES = (
         ('1', 'Class 1'), ('2', 'Class 2'), ('3', 'Class 3'),
@@ -129,6 +110,7 @@ class StudentProfile(models.Model):
         related_name='student_profile'
     )
 
+    # Academic (NULLABLE to avoid migration prompt)
     student_class = models.CharField(
         max_length=2,
         choices=CLASS_CHOICES,
@@ -148,6 +130,25 @@ class StudentProfile(models.Model):
         blank=True
     )
 
+    # Personal info (ALL NULLABLE)
+    first_name = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True
+    )
+
+    middle_name = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True
+    )
+
+    last_name = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True
+    )
+
     dob = models.DateField(
         null=True,
         blank=True
@@ -155,30 +156,48 @@ class StudentProfile(models.Model):
 
     father_name = models.CharField(
         max_length=100,
+        null=True,
+        blank=True
+    )
+
+    mother_name = models.CharField(
+        max_length=100,
+        null=True,
         blank=True
     )
 
     contact_number = models.CharField(
         max_length=15,
+        null=True,
         blank=True
     )
+
+    address = models.TextField(
+        null=True,
+        blank=True
+    )
+
+    admission_number = models.CharField(
+        max_length=50,
+        unique=True,
+        null=True,
+        blank=True
+    )
+
+    fees_paid = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['student_class', 'section', 'roll_no']
         unique_together = ('student_class', 'section', 'roll_no')
 
     def __str__(self):
-        return f"{self.user.username} | Class {self.student_class}{self.section} | Roll {self.roll_no}"
+        return self.user.username
 
 
 # ==================================================
-# HOMEWORK MODEL
+# HOMEWORK
 # ==================================================
 class Homework(models.Model):
-    """
-    Homework Model
-    """
-
     teacher = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -193,25 +212,15 @@ class Homework(models.Model):
 
     class Meta:
         ordering = ['due_date']
-        verbose_name = 'Homework'
-        verbose_name_plural = 'Homeworks'
 
     def __str__(self):
-        return f"{self.title} | Due: {self.due_date}"
+        return self.title
 
 
 # ==================================================
-# NOTICE MODEL
+# NOTICE
 # ==================================================
 class Notice(models.Model):
-    """
-    Notice Model
-    ------------
-
-    Admin / Teacher create
-    Student / Teacher view
-    """
-
     title = models.CharField(max_length=200)
     message = models.TextField()
 
@@ -228,8 +237,6 @@ class Notice(models.Model):
 
     class Meta:
         ordering = ['-created_at']
-        verbose_name = 'Notice'
-        verbose_name_plural = 'Notices'
 
     def __str__(self):
         return self.title

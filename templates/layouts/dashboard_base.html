@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div style="display:flex; min-height:80vh;">
+
+    <!-- ================= SIDEBAR ================= -->
+    <div style="
+        width:240px;
+        background:#111827;
+        color:white;
+        padding:20px;
+    ">
+
+        <h3 style="
+            text-align:center;
+            font-size:16px;
+            margin-bottom:25px;
+            font-weight:600;
+        ">
+            Vidhya Setu ERP
+        </h3>
+
+        <!-- ========== ADMIN MENU ========== -->
+        {% if user.role == 'ADMIN' %}
+            <a href="{% url 'admin_dashboard' %}" class="side-link">Dashboard</a>
+            <a href="{% url 'student_register' %}" class="side-link">Students</a>
+            <a href="{% url 'manage_users' %}" class="side-link">Teachers</a>
+            <a href="#" class="side-link">Attendance</a>
+            <a href="#" class="side-link">Fees</a>
+
+        <!-- ========== TEACHER MENU ========== -->
+        {% elif user.role == 'TEACHER' %}
+            <a href="{% url 'teacher_dashboard' %}" class="side-link">Dashboard</a>
+            <a href="#" class="side-link">My Classes</a>
+            <a href="#" class="side-link">Attendance</a>
+            <a href="{% url 'add_homework' %}" class="side-link">Homework</a>
+            <a href="#" class="side-link">Marks</a>
+
+        <!-- ========== STUDENT MENU ========== -->
+        {% elif user.role == 'STUDENT' %}
+            <a href="{% url 'student_dashboard' %}" class="side-link">Dashboard</a>
+            <a href="#" class="side-link">Attendance</a>
+            <a href="{% url 'view_homework' %}" class="side-link">Homework</a>
+            <a href="#" class="side-link">Marks</a>
+            <a href="#" class="side-link">Fees</a>
+        {% endif %}
+
+        <a href="{% url 'logout' %}" class="side-link logout">
+            Logout
+        </a>
+    </div>
+
+    <!-- ================= MAIN CONTENT ================= -->
+    <div style="flex:1; padding:30px; background:#f9fafb;">
+        {% block dashboard_content %}
+        {% endblock %}
+    </div>
+
+</div>
+
+<style>
+.side-link{
+    display:block;
+    padding:10px 14px;
+    color:#d1d5db;
+    text-decoration:none;
+    border-radius:6px;
+    margin-bottom:6px;
+    font-size:14px;
+    transition:0.3s;
+}
+.side-link:hover{
+    background:#1f2937;
+    color:white;
+}
+.logout{
+    background:#7f1d1d;
+    margin-top:20px;
+    color:white;
+}
+.logout:hover{
+    background:#991b1b;
+}
+</style>
+
+{% endblock %}

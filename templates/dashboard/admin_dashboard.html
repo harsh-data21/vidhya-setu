@@ -1,0 +1,58 @@
+{% extends 'layouts/dashboard_base.html' %}
+
+{% block title %}Admin Dashboard | Vidhya Setu ERP{% endblock %}
+
+{% block dashboard_content %}
+
+<!-- ================= PAGE HEADER ================= -->
+<div style="margin-bottom:25px;">
+    <h2 style="margin:0; color:#1f2937; font-weight:600;">
+        Admin Dashboard
+    </h2>
+    <p style="margin-top:6px; font-size:14px; color:#6b7280;">
+        System overview & administration controls
+    </p>
+</div>
+
+<!-- ================= DASHBOARD GRID ================= -->
+<div class="dashboard-grid">
+
+    <!-- STUDENTS -->
+    <div class="dashboard-card">
+        <h4>Students</h4>
+        <p>Register, update & manage student records</p>
+        <a href="{% url 'student_register' %}">
+            Add / Manage
+        </a>
+    </div>
+
+    <!-- TEACHERS -->
+    <div class="dashboard-card">
+        <h4>Teachers</h4>
+        <p>Manage teaching staff & user accounts</p>
+        <a href="{% url 'manage_users' %}">
+            Manage Users
+        </a>
+    </div>
+
+    <!-- ATTENDANCE -->
+    <div class="dashboard-card">
+        <h4>Attendance</h4>
+        <p>View class-wise attendance reports</p>
+        <a href="#">
+            View Reports
+        </a>
+    </div>
+
+    <!-- FEES -->
+    <div class="dashboard-card">
+        <h4>Fees</h4>
+        <p>Track fee collection & pending dues</p>
+        <a href="#">
+            Fees Report
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

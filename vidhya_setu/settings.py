@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'attendance',
     'fees',
     'marks',
+    'dashboard',
 ]
 
 
