@@ -17,11 +17,10 @@ from .models import StudentFee
 # 💰 STUDENT FEES VIEW
 # =================================================
 @login_required
-def student_fees_view(request):
+def my_fees(request):
     """
     Student can view own fees summary
     """
-
     if request.user.role != 'STUDENT':
         return HttpResponseForbidden("Access Denied")
 
@@ -53,11 +52,10 @@ def student_fees_view(request):
 # 💳 PAY FEE (DEMO PAYMENT)
 # =================================================
 @login_required
-def pay_fee_view(request, fee_id):
+def pay_fee(request, fee_id):
     """
     Demo payment: marks fee as PAID
     """
-
     if request.user.role != 'STUDENT':
         return HttpResponseForbidden("Access Denied")
 
@@ -74,18 +72,17 @@ def pay_fee_view(request, fee_id):
         fee.transaction_id = f"TXN{fee.id}{int(timezone.now().timestamp())}"
         fee.save()
 
-    return redirect('student_fees')
+    return redirect('my_fees')
 
 
 # =================================================
 # 🧾 PDF FEE RECEIPT
 # =================================================
 @login_required
-def fee_receipt_view(request, fee_id):
+def fee_receipt(request, fee_id):
     """
     Generates PDF fee receipt for student
     """
-
     if request.user.role != 'STUDENT':
         return HttpResponseForbidden("Access Denied")
 
@@ -139,11 +136,10 @@ def fee_receipt_view(request, fee_id):
 # 📊 ADMIN / TEACHER FEES REPORT
 # =================================================
 @login_required
-def fees_report_view(request):
+def fees_report(request):
     """
     Admin / Teacher fee analytics & report
     """
-
     if request.user.role not in ['ADMIN', 'TEACHER']:
         return HttpResponseForbidden("Access Denied")
 
@@ -153,9 +149,6 @@ def fees_report_view(request):
         'fee_structure'
     )
 
-    # -------------------------
-    # FILTERS
-    # -------------------------
     selected_month = request.GET.get('month', '').strip()
     selected_class = request.GET.get('class_name', '').strip()
 
@@ -165,9 +158,6 @@ def fees_report_view(request):
     if selected_class:
         fees = fees.filter(fee_structure__class_name=selected_class)
 
-    # -------------------------
-    # TOTALS
-    # -------------------------
     total_collected = fees.filter(status='PAID').aggregate(
         total=Sum('fee_structure__amount')
     )['total'] or Decimal('0.00')
@@ -175,21 +165,6 @@ def fees_report_view(request):
     total_pending = fees.filter(status='PENDING').aggregate(
         total=Sum('fee_structure__amount')
     )['total'] or Decimal('0.00')
-
-    # -------------------------
-    # CHART DATA
-    # -------------------------
-    pie_labels = ['Paid', 'Pending']
-    pie_values = [float(total_collected), float(total_pending)]
-
-    class_wise = fees.values(
-        'fee_structure__class_name'
-    ).annotate(
-        total=Sum('fee_structure__amount')
-    )
-
-    bar_labels = [c['fee_structure__class_name'] for c in class_wise]
-    bar_values = [float(c['total']) for c in class_wise]
 
     months = StudentFee.objects.values_list(
         'fee_structure__month', flat=True
@@ -207,10 +182,6 @@ def fees_report_view(request):
         'classes': classes,
         'selected_month': selected_month,
         'selected_class': selected_class,
-        'pie_labels': pie_labels,
-        'pie_values': pie_values,
-        'bar_labels': bar_labels,
-        'bar_values': bar_values,
     }
 
     return render(request, 'fees/fees_report.html', context)
@@ -224,7 +195,6 @@ def export_fees_excel(request):
     """
     Export fee report to Excel (Admin / Teacher)
     """
-
     if request.user.role not in ['ADMIN', 'TEACHER']:
         return HttpResponseForbidden("Access Denied")
 

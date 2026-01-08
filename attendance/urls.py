@@ -25,6 +25,6 @@ urlpatterns = [
     path(
         'monthly-report/',
         monthly_attendance_report,
-        name='monthly_attendance_report'
+        name='monthly_report'   # 🔴 FIXED NAME
     ),
 ]

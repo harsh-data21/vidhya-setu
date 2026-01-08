@@ -4,7 +4,7 @@ from django.shortcuts import render
 
 from accounts.models import User, StudentProfile
 
-# Fees app OPTIONAL hai – isliye safe import
+# Fees app OPTIONAL hai – safe import
 try:
     from fees.models import StudentFee
 except ImportError:
@@ -19,11 +19,9 @@ def admin_dashboard(request):
     if request.user.role != 'ADMIN':
         return HttpResponseForbidden("You are not allowed to access this page.")
 
-    # ---------- REAL DB COUNTS ----------
     total_students = StudentProfile.objects.count()
     total_teachers = User.objects.filter(role='TEACHER').count()
 
-    # Fees (safe handling)
     if StudentFee:
         total_fees = StudentFee.objects.count()
         pending_fees = StudentFee.objects.filter(status='PENDING').count()
@@ -42,13 +40,12 @@ def admin_dashboard(request):
 
 
 # ==================================================
-# 👨‍🏫 TEACHER DASHBOARD
+# 👨‍🏫 TEACHER
 # ==================================================
 @login_required
 def teacher_dashboard(request):
     if request.user.role != 'TEACHER':
-        return HttpResponseForbidden("You are not allowed to access this page.")
-
+        return HttpResponseForbidden()
     return render(request, 'dashboard/teacher_dashboard.html')
 
 
@@ -56,26 +53,23 @@ def teacher_dashboard(request):
 def teacher_attendance(request):
     if request.user.role != 'TEACHER':
         return HttpResponseForbidden()
-
-    return render(request, 'dashboard/teacher_attendance.html')
+    return render(request, 'attendance/mark_attendance.html')
 
 
 @login_required
 def teacher_marks(request):
     if request.user.role != 'TEACHER':
         return HttpResponseForbidden()
-
-    return render(request, 'dashboard/teacher_marks.html')
+    return render(request, 'marks/upload_marks.html')
 
 
 # ==================================================
-# 🎒 STUDENT DASHBOARD
+# 🎒 STUDENT
 # ==================================================
 @login_required
 def student_dashboard(request):
     if request.user.role != 'STUDENT':
-        return HttpResponseForbidden("You are not allowed to access this page.")
-
+        return HttpResponseForbidden()
     return render(request, 'dashboard/student_dashboard.html')
 
 
@@ -83,13 +77,18 @@ def student_dashboard(request):
 def student_attendance(request):
     if request.user.role != 'STUDENT':
         return HttpResponseForbidden()
-
-    return render(request, 'dashboard/student_attendance.html')
+    return render(request, 'attendance/student_attendance.html')
 
 
 @login_required
 def student_marks(request):
     if request.user.role != 'STUDENT':
         return HttpResponseForbidden()
+    return render(request, 'marks/my_marks.html')
 
-    return render(request, 'dashboard/student_marks.html')
+
+@login_required
+def my_fees(request):
+    if request.user.role != 'STUDENT':
+        return HttpResponseForbidden()
+    return render(request, 'student/my_fees.html')

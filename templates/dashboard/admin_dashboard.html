@@ -10,7 +10,7 @@
         Admin Dashboard
     </h2>
     <p style="margin-top:6px; font-size:14px; color:#6b7280;">
-        System overview & administration controls
+        System overview & administration
     </p>
 </div>
 
@@ -20,16 +20,16 @@
     <!-- STUDENTS -->
     <div class="dashboard-card">
         <h4>Students</h4>
-        <p>Register, update & manage student records</p>
-        <a href="{% url 'student_register' %}">
-            Add / Manage
+        <p>Register & manage students</p>
+        <a href="{% url 'student_list' %}">
+            View Students
         </a>
     </div>
 
     <!-- TEACHERS -->
     <div class="dashboard-card">
         <h4>Teachers</h4>
-        <p>Manage teaching staff & user accounts</p>
+        <p>Manage teachers & staff</p>
         <a href="{% url 'manage_users' %}">
             Manage Users
         </a>
@@ -38,17 +38,17 @@
     <!-- ATTENDANCE -->
     <div class="dashboard-card">
         <h4>Attendance</h4>
-        <p>View class-wise attendance reports</p>
-        <a href="#">
-            View Reports
+        <p>View attendance reports</p>
+        <a href="{% url 'monthly_report' %}">
+            View Attendance
         </a>
     </div>
 
     <!-- FEES -->
     <div class="dashboard-card">
         <h4>Fees</h4>
-        <p>Track fee collection & pending dues</p>
-        <a href="#">
+        <p>Fees reports & export</p>
+        <a href="{% url 'fees_report' %}">
             Fees Report
         </a>
     </div>

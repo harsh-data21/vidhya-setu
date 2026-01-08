@@ -1,62 +1,68 @@
-{% extends 'base.html' %}
-{% block content %}
+{% extends 'layouts/dashboard_base.html' %}
 
-<h2>💰 My Fees</h2>
+{% block title %}My Fees | Vidhya Setu ERP{% endblock %}
+
+{% block dashboard_content %}
+
+<h2 style="margin-top:0;">My Fees</h2>
 <hr>
 
 <!-- ================= SUMMARY ================= -->
 <div style="margin-bottom:20px;">
-    <strong>Total Fees:</strong> ₹{{ total_amount }} <br>
-    <strong>Paid:</strong> ₹{{ paid_amount }} <br>
-    <strong>Pending:</strong> ₹{{ pending_amount }}
+    <strong>Total Fees:</strong> ₹{{ total_amount|default:"0.00" }} <br>
+    <strong>Paid:</strong> ₹{{ paid_amount|default:"0.00" }} <br>
+    <strong>Pending:</strong> ₹{{ pending_amount|default:"0.00" }}
 </div>
 
 <!-- ================= FEES TABLE ================= -->
 <table border="1" cellpadding="10" cellspacing="0" width="100%">
-    <tr>
-        <th>Class</th>
-        <th>Month</th>
-        <th>Amount</th>
-        <th>Status</th>
-        <th>Paid On</th>
-        <th>Action</th>
-    </tr>
+    <thead>
+        <tr style="background:#f3f4f6;">
+            <th>Class</th>
+            <th>Month</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Paid On</th>
+            <th>Action</th>
+        </tr>
+    </thead>
 
+    <tbody>
     {% for fee in fees %}
-    <tr>
-        <td>{{ fee.fee_structure.class_name }}</td>
-        <td>{{ fee.fee_structure.month }}</td>
-        <td>₹{{ fee.fee_structure.amount }}</td>
+        <tr>
+            <td>{{ fee.fee_structure.class_name }}</td>
+            <td>{{ fee.fee_structure.month }}</td>
+            <td>₹{{ fee.fee_structure.amount }}</td>
 
-        {% if fee.status == 'PAID' %}
-            <td style="color:green;"><strong>PAID</strong></td>
-            <td>{{ fee.paid_on }}</td>
-            <td>
-                <a href="{% url 'fee_receipt' fee.id %}" target="_blank">
-                    🧾 Download Receipt
-                </a>
-            </td>
-        {% else %}
-            <td style="color:red;"><strong>PENDING</strong></td>
-            <td>—</td>
-            <td>
-                <form method="post" action="{% url 'pay_fee' fee.id %}">
-                    {% csrf_token %}
-                    <button type="submit">
-                        💳 Pay Now
-                    </button>
-                </form>
-            </td>
-        {% endif %}
-    </tr>
-
+            {% if fee.status == 'PAID' %}
+                <td style="color:green;"><strong>PAID</strong></td>
+                <td>{{ fee.paid_on|date:"d M Y" }}</td>
+                <td>
+                    <a href="{% url 'fee_receipt' fee.id %}">
+                        Download Receipt
+                    </a>
+                </td>
+            {% else %}
+                <td style="color:red;"><strong>PENDING</strong></td>
+                <td>—</td>
+                <td>
+                    <form method="post" action="{% url 'pay_fee' fee.id %}">
+                        {% csrf_token %}
+                        <button type="submit">
+                            Pay Now
+                        </button>
+                    </form>
+                </td>
+            {% endif %}
+        </tr>
     {% empty %}
-    <tr>
-        <td colspan="6" style="text-align:center;">
-            No fee records found.
-        </td>
-    </tr>
+        <tr>
+            <td colspan="6" style="text-align:center;">
+                No fee records found.
+            </td>
+        </tr>
     {% endfor %}
+    </tbody>
 </table>
 
 {% endblock %}
