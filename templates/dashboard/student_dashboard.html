@@ -14,6 +14,39 @@
     </p>
 </div>
 
+<!-- ================= QUICK STATS ================= -->
+<div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:30px;">
+
+    <div class="dashboard-card" style="text-align:center;">
+        <h4 style="margin-bottom:6px;">Attendance</h4>
+        <p style="font-size:22px; font-weight:600; color:#16a34a;">
+            {{ attendance_percent|default:"--" }}%
+        </p>
+    </div>
+
+    <div class="dashboard-card" style="text-align:center;">
+        <h4 style="margin-bottom:6px;">Marks</h4>
+        <p style="font-size:22px; font-weight:600; color:#2563eb;">
+            {{ marks_percent|default:"--" }}%
+        </p>
+    </div>
+
+    <div class="dashboard-card" style="text-align:center;">
+        <h4 style="margin-bottom:6px;">Fees Due</h4>
+        <p style="font-size:22px; font-weight:600; color:#dc2626;">
+            ₹{{ fees_pending|default:"0" }}
+        </p>
+    </div>
+
+    <div class="dashboard-card" style="text-align:center;">
+        <h4 style="margin-bottom:6px;">Notices</h4>
+        <p style="font-size:22px; font-weight:600; color:#ca8a04;">
+            {{ notices_count|default:"0" }}
+        </p>
+    </div>
+
+</div>
+
 <!-- ================= DASHBOARD GRID ================= -->
 <div class="dashboard-grid">
 
