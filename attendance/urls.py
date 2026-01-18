@@ -7,24 +7,24 @@ from .views import (
 
 urlpatterns = [
 
-    # 👨‍🏫 Teacher – mark attendance
+    # 👨‍🏫 Teacher – Mark student attendance
     path(
         'teacher/mark-attendance/',
         mark_attendance,
         name='mark_attendance'
     ),
 
-    # 👨‍🎓 Student – view own attendance
+    # 👨‍🎓 Student – View own attendance
     path(
-        'my/',
+        'my-attendance/',
         student_attendance,
         name='student_attendance'
     ),
 
-    # 📊 Admin / Teacher – monthly report
+    # 📊 Admin / Teacher – Monthly attendance report
     path(
         'monthly-report/',
         monthly_attendance_report,
-        name='monthly_report'   # 🔴 FIXED NAME
+        name='monthly_attendance_report'
     ),
 ]

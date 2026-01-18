@@ -39,12 +39,11 @@ class Attendance(models.Model):
     # Default = today (BEST PRACTICE)
     # --------------------
     date = models.DateField(
-        default=timezone.now
+        default=timezone.localdate
     )
 
     # --------------------
     # Attendance Status
-    # Default = Absent (safe practice)
     # --------------------
     status = models.CharField(
         max_length=1,
@@ -71,14 +70,9 @@ class Attendance(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     # --------------------
-    # Model-level validation (extra safety)
+    # Model-level validation
     # --------------------
     def clean(self):
-        """
-        Extra validation:
-        - Student role must be STUDENT
-        - Marked_by role must be TEACHER
-        """
         if self.student and self.student.role != 'STUDENT':
             raise ValidationError("Attendance can only be marked for students.")
 
@@ -86,20 +80,20 @@ class Attendance(models.Model):
             raise ValidationError("Attendance can only be marked by a teacher.")
 
     # --------------------
+    # Ensure clean() runs
+    # --------------------
+    def save(self, *args, **kwargs):
+        self.full_clean()   # calls clean()
+        super().save(*args, **kwargs)
+
+    # --------------------
     # Meta Configuration
     # --------------------
     class Meta:
-        # Same student + same date = no duplicate attendance
         unique_together = ('student', 'date')
-
-        # Latest attendance first
         ordering = ['-date', 'student']
-
-        # Admin display names
         verbose_name = 'Attendance'
         verbose_name_plural = 'Attendance Records'
-
-        # Database optimization
         indexes = [
             models.Index(fields=['student', 'date']),
         ]

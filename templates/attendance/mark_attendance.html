@@ -11,6 +11,17 @@
 </p>
 
 <!-- ================================================= -->
+<!-- 🔔 Messages -->
+<!-- ================================================= -->
+{% if messages %}
+    {% for message in messages %}
+        <p style="color: green; font-weight: bold;">
+            {{ message }}
+        </p>
+    {% endfor %}
+{% endif %}
+
+<!-- ================================================= -->
 <!-- ℹ️ Information Note -->
 <!-- ================================================= -->
 <p style="color: #555;">
@@ -34,7 +45,7 @@
         type="date"
         id="date"
         name="date"
-        value="{{ date }}"
+        value="{{ date|date:'Y-m-d' }}"
         required
     >
 
@@ -42,60 +53,57 @@
 
     <!-- =============================== -->
     <!-- 👨‍🎓 Students Attendance Table -->
-    <!-- students = StudentProfile queryset -->
     <!-- =============================== -->
-    <table border="1" cellpadding="10" cellspacing="0" style="width:80%;">
-        <tr style="background-color: #f2f2f2;">
-            <th>Roll No</th>
-            <th>Student Name</th>
-            <th>Present</th>
-            <th>Absent</th>
-        </tr>
+    <table border="1" cellpadding="10" cellspacing="0" style="width:80%; border-collapse: collapse;">
+        <thead>
+            <tr style="background-color: #f2f2f2;">
+                <th>Roll No</th>
+                <th>Student Name</th>
+                <th>Present</th>
+                <th>Absent</th>
+            </tr>
+        </thead>
 
+        <tbody>
         {% for sp in students %}
-        <tr>
-            <!-- Roll number -->
-            <td style="text-align:center;">
-                {{ sp.roll_no }}
-            </td>
+            <tr>
+                <!-- Roll number -->
+                <td style="text-align:center;">
+                    {{ sp.roll_no }}
+                </td>
 
-            <!-- Student username -->
-            <td>
-                {{ sp.user.username }}
-            </td>
+                <!-- Student username -->
+                <td>
+                    {{ sp.user.username }}
+                </td>
 
-            <!-- ============================== -->
-            <!-- ✅ Present -->
-            <!-- name MUST match views.py -->
-            <!-- name="status_<user.id>" -->
-            <td style="text-align: center;">
-                <input
-                    type="radio"
-                    name="status_{{ sp.user.id }}"
-                    value="P"
-                    required
-                >
-            </td>
+                <!-- ✅ Present -->
+                <td style="text-align:center;">
+                    <input
+                        type="radio"
+                        name="status_{{ sp.user.id }}"
+                        value="P"
+                    >
+                </td>
 
-            <!-- ============================== -->
-            <!-- ❌ Absent (default) -->
-            <td style="text-align: center;">
-                <input
-                    type="radio"
-                    name="status_{{ sp.user.id }}"
-                    value="A"
-                    checked
-                >
-            </td>
-        </tr>
-
+                <!-- ❌ Absent (default) -->
+                <td style="text-align:center;">
+                    <input
+                        type="radio"
+                        name="status_{{ sp.user.id }}"
+                        value="A"
+                        checked
+                    >
+                </td>
+            </tr>
         {% empty %}
-        <tr>
-            <td colspan="4" style="text-align:center;">
-                No students found.
-            </td>
-        </tr>
+            <tr>
+                <td colspan="4" style="text-align:center;">
+                    No students found.
+                </td>
+            </tr>
         {% endfor %}
+        </tbody>
     </table>
 
     <br>

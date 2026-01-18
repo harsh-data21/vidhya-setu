@@ -1,9 +1,10 @@
+from datetime import date
+
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.http import HttpResponseForbidden
 from django.contrib import messages
-from datetime import date
 
 from accounts.models import User, StudentProfile
 from .models import Attendance
@@ -34,12 +35,17 @@ def mark_attendance(request):
     assigned_section = teacher_profile.assigned_section
 
     # 🎓 Students (CLASS + SECTION + ROLL WISE)
-    student_profiles = StudentProfile.objects.filter(
-        student_class=assigned_class,
-        section=assigned_section
-    ).select_related('user').order_by('roll_no')
+    student_profiles = (
+        StudentProfile.objects
+        .filter(
+            student_class=assigned_class,
+            section=assigned_section
+        )
+        .select_related('user')
+        .order_by('roll_no')
+    )
 
-    selected_date = timezone.now().date()
+    selected_date = timezone.localdate()
 
     if request.method == 'POST':
         raw_date = request.POST.get('date')
@@ -57,7 +63,7 @@ def mark_attendance(request):
         for sp in student_profiles:
             status = request.POST.get(f"status_{sp.user.id}")
 
-            if status in ['P', 'A']:
+            if status in ('P', 'A'):
                 Attendance.objects.update_or_create(
                     student=sp.user,
                     date=selected_date,
@@ -78,7 +84,7 @@ def mark_attendance(request):
         'students': student_profiles,
         'date': selected_date,
         'class_name': assigned_class,
-        'section': assigned_section
+        'section': assigned_section,
     })
 
 
@@ -104,13 +110,15 @@ def student_attendance(request):
     total_days = records.count()
     present_days = records.filter(status='P').count()
 
-    percentage = round((present_days / total_days) * 100, 2) if total_days else 0
+    percentage = round(
+        (present_days / total_days) * 100, 2
+    ) if total_days > 0 else 0
 
     return render(request, 'attendance/student_attendance.html', {
         'records': records,
         'total_days': total_days,
         'present_days': present_days,
-        'percentage': percentage
+        'percentage': percentage,
     })
 
 
@@ -126,14 +134,19 @@ def monthly_attendance_report(request):
     - Month / Year based report
     """
 
-    if request.user.role not in ['ADMIN', 'TEACHER']:
+    if request.user.role not in ('ADMIN', 'TEACHER'):
         return HttpResponseForbidden("Access Denied")
 
-    today = date.today()
+    today = timezone.localdate()
     month = int(request.GET.get('month', today.month))
     year = int(request.GET.get('year', today.year))
 
-    students = User.objects.filter(role='STUDENT').select_related('student_profile')
+    students = (
+        User.objects
+        .filter(role='STUDENT')
+        .select_related('student_profile')
+        .order_by('username')
+    )
 
     report = []
 
@@ -153,5 +166,5 @@ def monthly_attendance_report(request):
     return render(request, 'attendance/monthly_report.html', {
         'report': report,
         'month': month,
-        'year': year
+        'year': year,
     })
