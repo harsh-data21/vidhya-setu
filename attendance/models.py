@@ -36,7 +36,6 @@ class Attendance(models.Model):
 
     # --------------------
     # Attendance Date
-    # Default = today (BEST PRACTICE)
     # --------------------
     date = models.DateField(
         default=timezone.localdate
@@ -73,17 +72,19 @@ class Attendance(models.Model):
     # Model-level validation
     # --------------------
     def clean(self):
-        if self.student and self.student.role != 'STUDENT':
-            raise ValidationError("Attendance can only be marked for students.")
+        # Student validation
+        if self.student and getattr(self.student, 'role', None) != 'STUDENT':
+            raise ValidationError("Attendance sirf STUDENT ke liye mark ho sakti hai.")
 
-        if self.marked_by and self.marked_by.role != 'TEACHER':
-            raise ValidationError("Attendance can only be marked by a teacher.")
+        # Teacher validation
+        if self.marked_by and getattr(self.marked_by, 'role', None) != 'TEACHER':
+            raise ValidationError("Attendance sirf TEACHER ke dwara mark ho sakti hai.")
 
     # --------------------
     # Ensure clean() runs
     # --------------------
     def save(self, *args, **kwargs):
-        self.full_clean()   # calls clean()
+        self.full_clean()
         super().save(*args, **kwargs)
 
     # --------------------

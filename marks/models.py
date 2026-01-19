@@ -12,11 +12,8 @@ class Subject(models.Model):
     Maths, English, Science, etc.
     """
 
-    name = models.CharField(
-        max_length=100
-    )
+    name = models.CharField(max_length=100)
 
-    # 🔥 IMPORTANT (future use):
     # Subject kis class ka hai
     class_name = models.CharField(
         max_length=2,
@@ -26,6 +23,8 @@ class Subject(models.Model):
     class Meta:
         unique_together = ('name', 'class_name')
         ordering = ['class_name', 'name']
+        verbose_name = "Subject"
+        verbose_name_plural = "Subjects"
 
     def __str__(self):
         return f"{self.name} (Class {self.class_name})"
@@ -68,7 +67,7 @@ class StudentMark(models.Model):
         blank=True
     )
 
-    # ✅ teacher who uploaded marks
+    # Teacher who uploaded marks
     uploaded_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -88,9 +87,8 @@ class StudentMark(models.Model):
         """
         Safely calculate percentage
         """
-        if self.marks_obtained is None or self.total_marks in (None, 0):
+        if self.marks_obtained is None or not self.total_marks:
             return 0
-
         return round((self.marks_obtained / self.total_marks) * 100, 2)
 
     percentage.short_description = "Percentage"
@@ -117,17 +115,25 @@ class StudentMark(models.Model):
     # ==================================================
     def clean(self):
         """
-        Validation:
-        - Obtained marks total se zyada nahi hone chahiye
+        Validation rules
         """
 
+        # Student role validation (extra safety)
+        if self.student and getattr(self.student, 'role', None) != 'STUDENT':
+            raise ValidationError("Marks can only be assigned to students.")
+
+        # Teacher role validation
+        if self.uploaded_by and getattr(self.uploaded_by, 'role', None) != 'TEACHER':
+            raise ValidationError("Marks can only be uploaded by a teacher.")
+
+        # Marks logic validation
         if (
             self.marks_obtained is not None
             and self.total_marks is not None
             and self.marks_obtained > self.total_marks
         ):
             raise ValidationError(
-                "Obtained marks cannot be greater than total marks"
+                "Obtained marks cannot be greater than total marks."
             )
 
     def save(self, *args, **kwargs):
@@ -144,7 +150,6 @@ class StudentMark(models.Model):
         verbose_name = "Student Mark"
         verbose_name_plural = "Student Marks"
 
-        # 🔥 VERY IMPORTANT
         # Same student + same subject + same exam duplicate na ho
         unique_together = ('student', 'subject', 'exam_name')
 

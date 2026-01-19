@@ -16,7 +16,7 @@ except ImportError:
 # ==================================================
 @login_required
 def admin_dashboard(request):
-    if request.user.role != 'ADMIN':
+    if getattr(request.user, 'role', None) != 'ADMIN':
         return HttpResponseForbidden("You are not allowed to access this page.")
 
     total_students = StudentProfile.objects.count()
@@ -40,55 +40,73 @@ def admin_dashboard(request):
 
 
 # ==================================================
-# 👨‍🏫 TEACHER
+# 📊 ADMIN: MONTHLY REPORT (FIX for NoReverseMatch)
+# ==================================================
+@login_required
+def monthly_report(request):
+    if getattr(request.user, 'role', None) != 'ADMIN':
+        return HttpResponseForbidden("You are not allowed to access this page.")
+
+    return render(request, 'dashboard/monthly_report.html')
+
+
+# ==================================================
+# 👨‍🏫 TEACHER DASHBOARD
 # ==================================================
 @login_required
 def teacher_dashboard(request):
-    if request.user.role != 'TEACHER':
-        return HttpResponseForbidden()
+    if getattr(request.user, 'role', None) != 'TEACHER':
+        return HttpResponseForbidden("Access denied.")
+
     return render(request, 'dashboard/teacher_dashboard.html')
 
 
 @login_required
 def teacher_attendance(request):
-    if request.user.role != 'TEACHER':
-        return HttpResponseForbidden()
+    if getattr(request.user, 'role', None) != 'TEACHER':
+        return HttpResponseForbidden("Access denied.")
+
     return render(request, 'attendance/mark_attendance.html')
 
 
 @login_required
 def teacher_marks(request):
-    if request.user.role != 'TEACHER':
-        return HttpResponseForbidden()
+    if getattr(request.user, 'role', None) != 'TEACHER':
+        return HttpResponseForbidden("Access denied.")
+
     return render(request, 'marks/upload_marks.html')
 
 
 # ==================================================
-# 🎒 STUDENT
+# 🎒 STUDENT DASHBOARD
 # ==================================================
 @login_required
 def student_dashboard(request):
-    if request.user.role != 'STUDENT':
-        return HttpResponseForbidden()
+    if getattr(request.user, 'role', None) != 'STUDENT':
+        return HttpResponseForbidden("Access denied.")
+
     return render(request, 'dashboard/student_dashboard.html')
 
 
 @login_required
 def student_attendance(request):
-    if request.user.role != 'STUDENT':
-        return HttpResponseForbidden()
+    if getattr(request.user, 'role', None) != 'STUDENT':
+        return HttpResponseForbidden("Access denied.")
+
     return render(request, 'attendance/student_attendance.html')
 
 
 @login_required
 def student_marks(request):
-    if request.user.role != 'STUDENT':
-        return HttpResponseForbidden()
+    if getattr(request.user, 'role', None) != 'STUDENT':
+        return HttpResponseForbidden("Access denied.")
+
     return render(request, 'marks/my_marks.html')
 
 
 @login_required
 def my_fees(request):
-    if request.user.role != 'STUDENT':
-        return HttpResponseForbidden()
+    if getattr(request.user, 'role', None) != 'STUDENT':
+        return HttpResponseForbidden("Access denied.")
+
     return render(request, 'student/my_fees.html')

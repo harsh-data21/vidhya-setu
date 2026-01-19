@@ -23,25 +23,39 @@
 
         <!-- ========== ADMIN MENU ========== -->
         {% if user.role == 'ADMIN' %}
-            <a href="{% url 'admin_dashboard' %}" class="side-link">Dashboard</a>
-            <a href="{% url 'student_register' %}" class="side-link">Students</a>
-            <a href="{% url 'manage_users' %}" class="side-link">Teachers</a>
+            <a href="{% url 'dashboard:admin_dashboard' %}" class="side-link">
+                Dashboard
+            </a>
+            <a href="{% url 'student_register' %}" class="side-link">
+                Students
+            </a>
+            <a href="{% url 'manage_users' %}" class="side-link">
+                Teachers
+            </a>
             <a href="#" class="side-link">Attendance</a>
             <a href="#" class="side-link">Fees</a>
 
         <!-- ========== TEACHER MENU ========== -->
         {% elif user.role == 'TEACHER' %}
-            <a href="{% url 'teacher_dashboard' %}" class="side-link">Dashboard</a>
+            <a href="{% url 'dashboard:teacher_dashboard' %}" class="side-link">
+                Dashboard
+            </a>
             <a href="#" class="side-link">My Classes</a>
             <a href="#" class="side-link">Attendance</a>
-            <a href="{% url 'add_homework' %}" class="side-link">Homework</a>
+            <a href="{% url 'add_homework' %}" class="side-link">
+                Homework
+            </a>
             <a href="#" class="side-link">Marks</a>
 
         <!-- ========== STUDENT MENU ========== -->
         {% elif user.role == 'STUDENT' %}
-            <a href="{% url 'student_dashboard' %}" class="side-link">Dashboard</a>
+            <a href="{% url 'dashboard:student_dashboard' %}" class="side-link">
+                Dashboard
+            </a>
             <a href="#" class="side-link">Attendance</a>
-            <a href="{% url 'view_homework' %}" class="side-link">Homework</a>
+            <a href="{% url 'view_homework' %}" class="side-link">
+                Homework
+            </a>
             <a href="#" class="side-link">Marks</a>
             <a href="#" class="side-link">Fees</a>
         {% endif %}

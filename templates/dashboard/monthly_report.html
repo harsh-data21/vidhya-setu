@@ -1,0 +1,56 @@
+{% extends 'layouts/dashboard_base.html' %}
+
+{% block title %}Monthly Report | Vidhya Setu ERP{% endblock %}
+
+{% block dashboard_content %}
+
+<!-- ================= PAGE HEADER ================= -->
+<div style="margin-bottom:25px;">
+    <h2 style="margin:0; color:#1f2937; font-weight:600;">
+        📊 Monthly Report
+    </h2>
+    <p style="margin-top:6px; font-size:14px; color:#6b7280;">
+        Attendance, marks and fees overview (monthly)
+    </p>
+</div>
+
+<hr>
+
+<!-- ================= CONTENT ================= -->
+<div style="
+    background:#ffffff;
+    padding:30px;
+    border-radius:10px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.08);
+">
+
+    <p style="font-size:15px; color:#374151;">
+        This section will show:
+    </p>
+
+    <ul style="color:#4b5563; line-height:1.8;">
+        <li>📅 Monthly attendance summary</li>
+        <li>📈 Average marks performance</li>
+        <li>💰 Fees collection & pending report</li>
+    </ul>
+
+    <p style="margin-top:15px; font-weight:bold; color:#dc2626;">
+        🚧 Status: Coming Soon
+    </p>
+
+</div>
+
+<br>
+
+<!-- ================= BACK LINK ================= -->
+{% if user.role == 'ADMIN' %}
+    <a href="{% url 'dashboard:admin_dashboard' %}">
+        ← Back to Admin Dashboard
+    </a>
+{% elif user.role == 'TEACHER' %}
+    <a href="{% url 'dashboard:teacher_dashboard' %}">
+        ← Back to Teacher Dashboard
+    </a>
+{% endif %}
+
+{% endblock %}

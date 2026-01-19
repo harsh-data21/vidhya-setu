@@ -2,20 +2,33 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
+    # ----------------------------
+    # Admin
+    # ----------------------------
     path('admin/', admin.site.urls),
 
-    # AUTH / ACCOUNTS
+    # ----------------------------
+    # Auth / Accounts
+    # ----------------------------
     path('', include('accounts.urls')),
 
-    # DASHBOARD
+    # ----------------------------
+    # Dashboard
+    # ----------------------------
     path('dashboard/', include('dashboard.urls')),
 
-    # ATTENDANCE
+    # ----------------------------
+    # Attendance
+    # ----------------------------
     path('attendance/', include('attendance.urls')),
 
-    # MARKS
+    # ----------------------------
+    # Marks
+    # ----------------------------
     path('marks/', include('marks.urls')),
 
-    # FEES  🔴 (THIS WAS MISSING)
+    # ----------------------------
+    # Fees
+    # ----------------------------
     path('fees/', include('fees.urls')),
 ]

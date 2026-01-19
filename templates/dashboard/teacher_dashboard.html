@@ -21,7 +21,7 @@
     <div class="dashboard-card">
         <h4>Attendance</h4>
         <p>Mark and review daily student attendance</p>
-        <a href="{% url 'mark_attendance' %}">
+        <a href="{% url 'dashboard:teacher_attendance' %}">
             Mark Attendance
         </a>
     </div>
@@ -39,7 +39,7 @@
     <div class="dashboard-card">
         <h4>Marks</h4>
         <p>Upload and manage examination marks</p>
-        <a href="{% url 'teacher_marks' %}">
+        <a href="{% url 'dashboard:teacher_marks' %}">
             Upload Marks
         </a>
     </div>

@@ -21,7 +21,7 @@
     <div class="dashboard-card">
         <h4>Students</h4>
         <p>Register & manage students</p>
-        <a href="{% url 'student_list' %}">
+        <a href="{% url 'dashboard:student_dashboard' %}">
             View Students
         </a>
     </div>
@@ -30,7 +30,7 @@
     <div class="dashboard-card">
         <h4>Teachers</h4>
         <p>Manage teachers & staff</p>
-        <a href="{% url 'manage_users' %}">
+        <a href="{% url 'dashboard:teacher_dashboard' %}">
             Manage Users
         </a>
     </div>
@@ -39,7 +39,7 @@
     <div class="dashboard-card">
         <h4>Attendance</h4>
         <p>View attendance reports</p>
-        <a href="{% url 'monthly_report' %}">
+        <a href="{% url 'dashboard:monthly_report' %}">
             View Attendance
         </a>
     </div>
@@ -48,7 +48,7 @@
     <div class="dashboard-card">
         <h4>Fees</h4>
         <p>Fees reports & export</p>
-        <a href="{% url 'fees_report' %}">
+        <a href="{% url 'dashboard:admin_dashboard' %}">
             Fees Report
         </a>
     </div>

@@ -13,18 +13,17 @@ from .models import Subject, StudentMark
 @login_required
 def upload_marks(request):
     """
-    📝 Upload Marks View (Teacher Only)
+    Upload Marks View (Teacher Only)
 
-    - Sirf TEACHER role access kar sakta hai
-    - Teacher ki assigned class & section ke students hi dikhenge
-    - Students roll number wise ordered honge
-    - Teacher subject + exam + total marks decide karega
+    - Sirf TEACHER access
+    - Assigned class & section ke students
+    - Roll number wise entry
     """
 
     # -----------------------------
     # 🔐 ROLE CHECK
     # -----------------------------
-    if request.user.role != 'TEACHER':
+    if getattr(request.user, 'role', None) != 'TEACHER':
         return HttpResponseForbidden("Access Denied")
 
     # -----------------------------
@@ -32,7 +31,7 @@ def upload_marks(request):
     # -----------------------------
     try:
         teacher_profile = request.user.teacher_profile
-    except Exception:
+    except AttributeError:
         messages.error(request, "Teacher profile not found ❌")
         return redirect('teacher_dashboard')
 
@@ -40,20 +39,27 @@ def upload_marks(request):
     assigned_section = teacher_profile.assigned_section
 
     # -----------------------------
-    # 🎓 STUDENTS (Class + Section + Roll wise)
+    # 🎓 STUDENTS (Class + Section)
     # -----------------------------
-    student_profiles = StudentProfile.objects.filter(
-        student_class=assigned_class,
-        section=assigned_section
-    ).select_related('user').order_by('roll_no')
+    student_profiles = (
+        StudentProfile.objects
+        .filter(
+            student_class=assigned_class,
+            section=assigned_section
+        )
+        .select_related('user')
+        .order_by('roll_no')
+    )
 
-    # 🔥 Sirf isi class ke subjects
+    # -----------------------------
+    # 📚 SUBJECTS (Only this class)
+    # -----------------------------
     subjects = Subject.objects.filter(
         class_name=assigned_class
     ).order_by('name')
 
     # -----------------------------
-    # 📝 FORM SUBMIT (POST)
+    # 📝 FORM SUBMIT
     # -----------------------------
     if request.method == 'POST':
 
@@ -66,11 +72,11 @@ def upload_marks(request):
         # -----------------------------
         if not subject_id or not total_marks:
             messages.error(request, "Subject and total marks are required ❌")
-            return redirect('upload_marks')
+            return redirect('marks:upload_marks')
 
         if not total_marks.isdigit() or int(total_marks) <= 0:
             messages.error(request, "Total marks must be a positive number ❌")
-            return redirect('upload_marks')
+            return redirect('marks:upload_marks')
 
         subject = get_object_or_404(
             Subject,
@@ -86,14 +92,14 @@ def upload_marks(request):
         # -----------------------------
         for sp in student_profiles:
             student = sp.user
-            marks = request.POST.get(f"marks_{student.id}")
+            marks_value = request.POST.get(f"marks_{student.id}")
 
-            if not marks or not marks.isdigit():
+            if not marks_value or not marks_value.isdigit():
                 continue
 
-            marks = int(marks)
+            marks_value = int(marks_value)
 
-            if marks < 0 or marks > total_marks:
+            if marks_value < 0 or marks_value > total_marks:
                 continue
 
             StudentMark.objects.update_or_create(
@@ -101,7 +107,7 @@ def upload_marks(request):
                 subject=subject,
                 exam_name=exam_name,
                 defaults={
-                    'marks_obtained': marks,
+                    'marks_obtained': marks_value,
                     'total_marks': total_marks,
                     'uploaded_by': request.user
                 }
@@ -110,7 +116,7 @@ def upload_marks(request):
             saved_count += 1
 
         # -----------------------------
-        # ✅ USER FEEDBACK
+        # ✅ FEEDBACK
         # -----------------------------
         if saved_count == 0:
             messages.warning(
@@ -123,7 +129,7 @@ def upload_marks(request):
                 f"Marks uploaded successfully ✅ ({saved_count} students)"
             )
 
-        return redirect('upload_marks')
+        return redirect('marks:upload_marks')
 
     # -----------------------------
     # 📄 PAGE LOAD (GET)
@@ -141,40 +147,44 @@ def upload_marks(request):
 
 
 # ==================================================
-# 📊 STUDENT: VIEW MY MARKS (EXAM-WISE FILTER)
+# 📊 STUDENT: VIEW MY MARKS
 # ==================================================
 @login_required
 def my_marks(request):
     """
-    📊 Student apne hi marks dekhe
-    + Exam-wise filter supported
+    Student apne hi marks dekhe
+    + Exam-wise filter
     """
 
-    if request.user.role != 'STUDENT':
+    if getattr(request.user, 'role', None) != 'STUDENT':
         return HttpResponseForbidden("Access Denied")
 
     selected_exam = request.GET.get('exam')
 
-    marks = StudentMark.objects.filter(
-        student=request.user
-    ).select_related('subject')
+    marks_qs = (
+        StudentMark.objects
+        .filter(student=request.user)
+        .select_related('subject')
+    )
 
-    # 🔥 Exam filter
     if selected_exam:
-        marks = marks.filter(exam_name=selected_exam)
+        marks_qs = marks_qs.filter(exam_name=selected_exam)
 
-    marks = marks.order_by('subject__name')
+    marks_qs = marks_qs.order_by('subject__name')
 
-    # 🔥 Dropdown ke liye exam list
-    exams = StudentMark.objects.filter(
-        student=request.user
-    ).values_list('exam_name', flat=True).distinct()
+    # Dropdown ke liye exam list
+    exams = (
+        StudentMark.objects
+        .filter(student=request.user)
+        .values_list('exam_name', flat=True)
+        .distinct()
+    )
 
     return render(
         request,
         'marks/my_marks.html',
         {
-            'marks': marks,
+            'marks': marks_qs,
             'exams': exams,
             'selected_exam': selected_exam
         }

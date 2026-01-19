@@ -22,13 +22,13 @@ def home(request):
 # ==================================================
 def login_view(request):
 
-    # 🔒 Already logged in users → dashboard app
+    # Already logged-in users → dashboard
     if request.user.is_authenticated:
         if request.user.role == 'ADMIN':
-            return redirect('admin_dashboard')
+            return redirect('dashboard:admin_dashboard')
         elif request.user.role == 'TEACHER':
-            return redirect('teacher_dashboard')
-        return redirect('student_dashboard')
+            return redirect('dashboard:teacher_dashboard')
+        return redirect('dashboard:student_dashboard')
 
     if request.method == "POST":
         username = request.POST.get('username', '').strip()
@@ -45,10 +45,10 @@ def login_view(request):
             messages.success(request, f"Welcome {user.username}")
 
             if user.role == 'ADMIN':
-                return redirect('admin_dashboard')
+                return redirect('dashboard:admin_dashboard')
             elif user.role == 'TEACHER':
-                return redirect('teacher_dashboard')
-            return redirect('student_dashboard')
+                return redirect('dashboard:teacher_dashboard')
+            return redirect('dashboard:student_dashboard')
 
         messages.error(request, "Invalid username or password")
 
@@ -91,7 +91,6 @@ def student_register(request):
         student_class = request.POST.get('student_class')
         section = request.POST.get('section')
 
-        # -------- Validation --------
         if not all([
             first_name, last_name, father_name, mother_name,
             contact_number, address, dob, student_class, section
@@ -105,7 +104,6 @@ def student_register(request):
             messages.error(request, "Invalid Date of Birth")
             return redirect('student_register')
 
-        # -------- Username & Password --------
         password = f"{first_name.lower()}@{dob_obj.year}"
         base_username = f"{first_name.lower()}{last_name.lower()}{dob_obj.day}"
         username = base_username
@@ -114,7 +112,6 @@ def student_register(request):
             username = f"{base_username}{counter}"
             counter += 1
 
-        # -------- Roll Number --------
         last_student = StudentProfile.objects.filter(
             student_class=student_class,
             section=section
@@ -122,7 +119,6 @@ def student_register(request):
 
         roll_no = last_student.roll_no + 1 if last_student else 1
 
-        # -------- Create User + Profile --------
         with transaction.atomic():
             user = User.objects.create_user(
                 username=username,
@@ -150,7 +146,7 @@ def student_register(request):
             request,
             f"Student registered | Username: {username} | Password: {password}"
         )
-        return redirect('admin_dashboard')
+        return redirect('dashboard:admin_dashboard')
 
     return render(request, 'register/student_register.html', {
         'classes': CLASS_CHOICES,
@@ -195,6 +191,7 @@ def add_homework(request):
     if request.method == "POST":
         title = request.POST.get('title', '').strip()
         description = request.POST.get('description', '').strip()
+        due_date = request.POST.get('due_date')
 
         if not title or not description:
             messages.error(request, "All fields are required")
@@ -204,11 +201,11 @@ def add_homework(request):
             teacher=request.user,
             title=title,
             description=description,
-            due_date=request.POST.get('due_date')
+            due_date=due_date
         )
 
         messages.success(request, "Homework added successfully")
-        return redirect('teacher_dashboard')
+        return redirect('dashboard:teacher_dashboard')
 
     return render(request, 'teacher/add_homework.html')
 
@@ -220,7 +217,9 @@ def view_homework(request):
         return HttpResponseForbidden("Access Denied")
 
     homework = Homework.objects.all().order_by('-created_at')
-    return render(request, 'student/view_homework.html', {'homework': homework})
+    return render(request, 'student/view_homework.html', {
+        'homework': homework
+    })
 
 
 # ==================================================
@@ -229,7 +228,9 @@ def view_homework(request):
 @login_required
 def notice_list(request):
     notices = Notice.objects.filter(is_active=True).order_by('-created_at')
-    return render(request, 'notice/notice_list.html', {'notices': notices})
+    return render(request, 'notice/notice_list.html', {
+        'notices': notices
+    })
 
 
 # ==================================================
@@ -242,7 +243,9 @@ def manage_users(request):
         return HttpResponseForbidden("Access Denied")
 
     users = User.objects.all().order_by('role')
-    return render(request, 'admin/manage_users.html', {'users': users})
+    return render(request, 'admin/manage_users.html', {
+        'users': users
+    })
 
 
 @login_required
@@ -260,7 +263,9 @@ def edit_user(request, user_id):
         messages.success(request, "User updated successfully")
         return redirect('manage_users')
 
-    return render(request, 'admin/edit_user.html', {'user_obj': user})
+    return render(request, 'admin/edit_user.html', {
+        'user_obj': user
+    })
 
 
 @login_required
