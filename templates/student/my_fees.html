@@ -38,7 +38,7 @@
                 <td style="color:green;"><strong>PAID</strong></td>
                 <td>{{ fee.paid_on|date:"d M Y" }}</td>
                 <td>
-                    <a href="{% url 'fee_receipt' fee.id %}">
+                    <a href="{% url 'fees:fee_receipt' fee.id %}">
                         Download Receipt
                     </a>
                 </td>

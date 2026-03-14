@@ -2,33 +2,34 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
+
     # ----------------------------
-    # Admin
+    # Django Admin
     # ----------------------------
     path('admin/', admin.site.urls),
 
     # ----------------------------
-    # Auth / Accounts
+    # Accounts / Authentication
     # ----------------------------
     path('', include('accounts.urls')),
 
     # ----------------------------
-    # Dashboard
+    # Dashboard (Admin/Teacher/Student)
     # ----------------------------
     path('dashboard/', include('dashboard.urls')),
 
     # ----------------------------
-    # Attendance
+    # Attendance Module
     # ----------------------------
     path('attendance/', include('attendance.urls')),
 
     # ----------------------------
-    # Marks
+    # Marks Module
     # ----------------------------
     path('marks/', include('marks.urls')),
 
     # ----------------------------
-    # Fees
+    # Fees Module
     # ----------------------------
     path('fees/', include('fees.urls')),
 ]

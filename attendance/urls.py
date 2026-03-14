@@ -5,26 +5,29 @@ from .views import (
     monthly_attendance_report,
 )
 
+# Namespace (important for template urls)
+app_name = "attendance"
+
 urlpatterns = [
 
-    # 👨‍🏫 Teacher – Mark student attendance
+    # Teacher – Mark student attendance
     path(
-        'teacher/mark-attendance/',
+        "teacher/mark-attendance/",
         mark_attendance,
-        name='mark_attendance'
+        name="mark_attendance"
     ),
 
-    # 👨‍🎓 Student – View own attendance
+    # Student – View own attendance
     path(
-        'my-attendance/',
+        "my-attendance/",
         student_attendance,
-        name='student_attendance'
+        name="student_attendance"
     ),
 
-    # 📊 Admin / Teacher – Monthly attendance report
+    # Admin / Teacher – Monthly attendance report
     path(
-        'monthly-report/',
+        "monthly-report/",
         monthly_attendance_report,
-        name='monthly_attendance_report'
+        name="monthly_attendance_report"
     ),
 ]

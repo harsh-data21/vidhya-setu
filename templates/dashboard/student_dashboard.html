@@ -1,60 +1,65 @@
-{% extends 'layouts/dashboard_base.html' %}
+{% extends "layouts/dashboard_base.html" %}
 
 {% block title %}Student Dashboard | Vidhya Setu ERP{% endblock %}
 
 {% block dashboard_content %}
 
-<!-- ================= PAGE HEADER ================= -->
+<!-- PAGE HEADER -->
 <div style="margin-bottom:25px;">
-    <h2 style="margin:0; color:#1f2937; font-weight:600;">
+    <h2 style="margin:0;color:#1f2937;font-weight:600;">
         Student Dashboard
     </h2>
-    <p style="margin-top:6px; font-size:14px; color:#6b7280;">
+
+    <p style="margin-top:6px;font-size:14px;color:#6b7280;">
         Your academic overview
     </p>
 </div>
 
-<!-- ================= QUICK STATS ================= -->
-<div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:30px;">
+
+<!-- QUICK STATS -->
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:30px;">
 
     <div class="dashboard-card" style="text-align:center;">
-        <h4 style="margin-bottom:6px;">Attendance</h4>
-        <p style="font-size:22px; font-weight:600; color:#16a34a;">
+        <h4>Attendance</h4>
+        <p style="font-size:22px;font-weight:600;color:#16a34a;">
             {{ attendance_percent|default:"--" }}%
         </p>
     </div>
 
     <div class="dashboard-card" style="text-align:center;">
-        <h4 style="margin-bottom:6px;">Marks</h4>
-        <p style="font-size:22px; font-weight:600; color:#2563eb;">
+        <h4>Marks</h4>
+        <p style="font-size:22px;font-weight:600;color:#2563eb;">
             {{ marks_percent|default:"--" }}%
         </p>
     </div>
 
     <div class="dashboard-card" style="text-align:center;">
-        <h4 style="margin-bottom:6px;">Fees Due</h4>
-        <p style="font-size:22px; font-weight:600; color:#dc2626;">
+        <h4>Fees Due</h4>
+        <p style="font-size:22px;font-weight:600;color:#dc2626;">
             ₹{{ fees_pending|default:"0" }}
         </p>
     </div>
 
     <div class="dashboard-card" style="text-align:center;">
-        <h4 style="margin-bottom:6px;">Notices</h4>
-        <p style="font-size:22px; font-weight:600; color:#ca8a04;">
+        <h4>Notices</h4>
+        <p style="font-size:22px;font-weight:600;color:#ca8a04;">
             {{ notices_count|default:"0" }}
         </p>
     </div>
 
 </div>
 
-<!-- ================= DASHBOARD GRID ================= -->
+
+<!-- DASHBOARD GRID -->
 <div class="dashboard-grid">
 
     <!-- ATTENDANCE -->
     <div class="dashboard-card">
         <h4>Attendance</h4>
         <p>View your attendance record</p>
-        <a href="{% url 'dashboard:student_attendance' %}">
+
+        <!-- attendance app namespace -->
+        <a href="{% url 'attendance:student_attendance' %}">
             My Attendance
         </a>
     </div>
@@ -62,8 +67,10 @@
     <!-- MARKS -->
     <div class="dashboard-card">
         <h4>Marks</h4>
-        <p>Check examination and test results</p>
-        <a href="{% url 'dashboard:student_marks' %}">
+        <p>Check examination results</p>
+
+        <!-- marks app namespace -->
+        <a href="{% url 'marks:my_marks' %}">
             My Marks
         </a>
     </div>
@@ -72,6 +79,8 @@
     <div class="dashboard-card">
         <h4>Homework</h4>
         <p>View homework assigned by teachers</p>
+
+        <!-- accounts app url -->
         <a href="{% url 'view_homework' %}">
             View Homework
         </a>
@@ -81,7 +90,9 @@
     <div class="dashboard-card">
         <h4>Fees</h4>
         <p>View fee status and payment details</p>
-        <a href="{% url 'my_fees' %}">
+
+        <!-- fees app namespace -->
+        <a href="{% url 'fees:student_fees' %}">
             My Fees
         </a>
     </div>

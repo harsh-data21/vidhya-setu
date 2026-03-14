@@ -1,60 +1,65 @@
 from django.urls import path
 from . import views
 
-app_name = 'dashboard'   # ✅ namespacing (BEST PRACTICE)
+app_name = "dashboard"   # namespace
 
 urlpatterns = [
 
     # ================= ADMIN =================
     path(
-        'admin/',
+        "admin/",
         views.admin_dashboard,
-        name='admin_dashboard'
+        name="admin_dashboard",
     ),
 
-    # 🔥 FIX: Monthly Report URL (NoReverseMatch solved)
+    # Admin / Teacher – Monthly report
     path(
-        'monthly-report/',
+        "monthly-report/",
         views.monthly_report,
-        name='monthly_report'
+        name="monthly_report",
     ),
 
     # ================= TEACHER =================
     path(
-        'teacher/',
+        "teacher/",
         views.teacher_dashboard,
-        name='teacher_dashboard'
+        name="teacher_dashboard",
     ),
+
     path(
-        'teacher/attendance/',
+        "teacher/attendance/",
         views.teacher_attendance,
-        name='teacher_attendance'
+        name="teacher_attendance",
     ),
+
     path(
-        'teacher/marks/',
+        "teacher/marks/",
         views.teacher_marks,
-        name='teacher_marks'
+        name="teacher_marks",
     ),
 
     # ================= STUDENT =================
     path(
-        'student/',
+        "student/",
         views.student_dashboard,
-        name='student_dashboard'
+        name="student_dashboard",
     ),
+
     path(
-        'student/attendance/',
+        "student/attendance/",
         views.student_attendance,
-        name='student_attendance'
+        name="student_attendance",
     ),
+
     path(
-        'student/marks/',
+        "student/marks/",
         views.student_marks,
-        name='student_marks'
+        name="student_marks",
     ),
+
     path(
-        'student/fees/',
+        "student/fees/",
         views.my_fees,
-        name='my_fees'
+        name="student_fees",   # renamed for clarity
     ),
 ]
